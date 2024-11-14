@@ -16,10 +16,22 @@ export const options: NextAuthOptions = {
           type: 'text',
           placeholder: "username",
         },
+        password: {
+          label: "Password:",
+          type: 'password',
+          placeholder: "password",
+        },
       },
       async authorize(credentials) {
+        const user = { id: "42", name: "Dave", password: "nextauth"}
 
+        if (credentials?.username === user.name && credentials?.password === user.password) {
+          return user
+        } else {
+          return null
+        }
       }
+        
     })
   ],
   
