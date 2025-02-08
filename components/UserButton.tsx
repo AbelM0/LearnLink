@@ -1,4 +1,4 @@
-import avatarPlaceholder from "./../app/assets/images/avatar_placeholder.png"
+import avatarPlaceholder from "./../assets/images/avatar_placeholder.png"
 import { LogOut, Settings } from "lucide-react";
 import { User } from "next-auth";
 import Image from "next/image";
@@ -33,12 +33,12 @@ export default function UserButton({ user }: UserButtonProps) {
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56 rounded-lg border border-gray-300/50 bg-gray-200/30 backdrop-blur-2xl shadow-lg shadow-gray-300/20">
         <DropdownMenuLabel>{user.name || "User"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings">
+            <Link href="/settings" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </Link>
