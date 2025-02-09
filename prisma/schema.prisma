@@ -66,4 +66,9 @@ model VerificationToken {
 
   @@map("verification_tokens")
 }
+
+model Class {
+  classId   String @unique
+  className String
+}
  

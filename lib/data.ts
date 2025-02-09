@@ -1,14 +1,15 @@
-import { neon } from "@neondatabase/serverless";
+"use server";
 
-const sql = neon(process.env.DATABASE_URL as string);
+import { prisma } from "./prisma";
 
-export async function fetchUserByUsername( username: string ) {
+
+export async function fetchUserByEmail( email: string ) {
     
-    const data = await sql`
-        SELECT * 
-        FROM users 
-        WHERE username = ${username};
-      `;
-      
-      return data.length > 0 ? data[0] : null;
+   const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    }
+   })
+
+   return user;
 }

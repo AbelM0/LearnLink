@@ -4,6 +4,8 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,12 +32,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-full min-h-screen flex`}
       >
         <SessionProvider>
-          <NavBar />
-            {children}
-          <Toaster />
+          <SidebarProvider defaultOpen={false}>
+            <div className="flex w-full">
+              {/* Sidebar */}
+              <AppSidebar/>
+
+              {/* Main Content */}
+              <main className="flex-grow ">
+                <NavBar />
+                <div className="p-4">{children}</div>
+                <Toaster />
+              </main>
+            </div>
+          </SidebarProvider>
         </SessionProvider>
       </body>
     </html>
