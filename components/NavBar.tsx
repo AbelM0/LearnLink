@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import UserButton from "./UserButton";
 import { signIn, useSession } from "next-auth/react";
+import AvatarSkeleton from "./ui/AvatarSkeleton";
 
-export default async function NavBar() {
+export default function NavBar() {
   const session = useSession();
   const user = session.data?.user;
 
@@ -15,8 +16,13 @@ export default async function NavBar() {
         <Link href="/" className="font-bold">
           Learnlink
         </Link>
-        {user && <UserButton user={user} />}
-        {!user && session.status !== "loading" && <SignInButton />}
+        {session.status === "loading" ? (
+          <AvatarSkeleton />
+        ) : user ? (
+          <UserButton user={user} />
+        ) : (
+          <SignInButton />
+        )}
       </nav>
     </div>
   );

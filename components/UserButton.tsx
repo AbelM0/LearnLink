@@ -53,7 +53,7 @@ export default function UserButton({ user }: UserButtonProps) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-            <button onClick={() => signOut} type="submit" className="flex w-full items-center">
+            <button onClick={() => signOut()} type="submit" className="flex w-full items-center">
               <LogOut className="mr-2 h-4 w-4" /> Sign Out
             </button>
         </DropdownMenuItem>
