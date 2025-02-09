@@ -1,7 +1,6 @@
 "use client"
 
 import { Telescope, Home, Search, Settings, User2, ChevronUp } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar";
 
 import {
   Sidebar,
