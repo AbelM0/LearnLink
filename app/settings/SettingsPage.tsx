@@ -41,7 +41,7 @@ export default function SettingsPage({user} : SettingsPagepProps) {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "An error occurred. Please try again.",
+        description: `An error occurred. Please try again. ${error}`,
       });
     }
   }
