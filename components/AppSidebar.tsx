@@ -8,7 +8,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -45,10 +44,7 @@ const items = [
 export function AppSidebar() {
 
   const session = useSession();
-  const user = session.data?.user;
-
-  const { open, setOpen, isMobile } = useSidebar();
-  const allowHoverExpand = !open; 
+  const user = session.data?.user; 
 
 
   return (
