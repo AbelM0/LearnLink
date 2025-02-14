@@ -12,6 +12,12 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+				fontFamily: {
+					sans: "var(--font-geist-sans)",
+        	mono: "var(--font-geist-mono)",
+					comfortaa: "var(--font-comfortaa)",
+					roboto: "var(--font-roboto)",
+				},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

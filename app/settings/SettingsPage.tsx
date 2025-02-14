@@ -62,7 +62,7 @@ export default function SettingsPage({user} : SettingsPagepProps) {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter a username" {...field} />
+                    <Input className="border-border" placeholder="Enter a username" {...field} />
                   </FormControl>
                   <FormDescription>Your public username</FormDescription>
                   <FormMessage />

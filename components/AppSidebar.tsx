@@ -11,16 +11,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarGroupLabel
 } from "@/components/ui/sidebar"
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "./ui/dropdown-menu";
 import { useSession } from "next-auth/react";
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { signOut } from "next-auth/react";
 
 // Menu items.
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {
@@ -35,24 +38,26 @@ const items = [
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ]
 
 export function AppSidebar() {
-
   const session = useSession();
   const user = session.data?.user; 
 
+  const handleSignOut = () => {
+    signOut();
+  };
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-gray-300/50 backdrop-blur-2xl shadow-lg shadow-gray-300/20"
-    >
-      <SidebarContent>
+    <Sidebar collapsible="icon" className="border-r border-border">
+      <SidebarContent className="bg-background/40 backdrop-blur-md">
         <SidebarGroup>
+          <VisuallyHidden>
+            <SidebarGroupLabel>App Sidebar</SidebarGroupLabel>
+          </VisuallyHidden>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -66,12 +71,13 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-            
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
-          <SidebarMenu>
+        <SidebarMenu>
+          {user ? (
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -90,14 +96,21 @@ export function AppSidebar() {
                   <DropdownMenuItem>
                     <span>Billing</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
                     <span>Sign out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
+          ) : (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/auth/signin">Sign in</a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

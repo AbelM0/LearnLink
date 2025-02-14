@@ -33,9 +33,9 @@ export default function UserButton({ user }: UserButtonProps) {
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 rounded-lg border border-gray-300/50 bg-gray-200/30 backdrop-blur-2xl shadow-lg shadow-gray-300/20">
+      <DropdownMenuContent className="w-56 rounded-lg border border-border bg-background/75 backdrop-blur-md mr-2">
         <DropdownMenuLabel>{user.name || "User"}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-border"/>
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/settings" className="cursor-pointer">
@@ -43,17 +43,10 @@ export default function UserButton({ user }: UserButtonProps) {
               <span>Settings</span>
             </Link>
           </DropdownMenuItem>
-          {/* TODO: Show this only for admins */}
-          {/* <DropdownMenuItem asChild>
-                <Link href="/admin">
-                  <Lock className="mr-2 h-4 w-4" />
-                  Admin
-                </Link>
-              </DropdownMenuItem> */}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-            <button onClick={() => signOut()} type="submit" className="flex w-full items-center">
+        <DropdownMenuSeparator/>
+        <DropdownMenuItem asChild >
+            <button onClick={() => signOut()} type="submit" className="flex w-full items-center cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" /> Sign Out
             </button>
         </DropdownMenuItem>

@@ -12,4 +12,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google,
     GitHub,
   ],
+  callbacks: {
+    session({ session, user }) {
+      session.user.id = user.id
+      return session
+    }
+  }
 });
