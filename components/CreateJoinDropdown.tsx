@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 
 import { Button } from "@/components/ui/button"
 import {
