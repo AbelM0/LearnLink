@@ -15,7 +15,7 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-const { id } = await params;
+const { id } =  params;
 
  const session = await getSession();
  const user = session?.user;
