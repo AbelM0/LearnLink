@@ -11,29 +11,29 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
+
 export default async function Page({ params }: PageProps) {
-const { id } =  params;
+  const { id } = await params;
 
- const session = await getSession();
- const user = session?.user;
+  const session = await getSession();
+  const user = session?.user;
 
- if (!user) {
-  redirect(`/api/auth/signin?callbackUrl=/`);
- }
+  if (!user) {
+    redirect(`/api/auth/signin?callbackUrl=/`);
+  }
 
- const classData = await getClass(id);
+  const classData = await getClass(id);
 
- if (!classData) {
-   redirect("/not-found");
- }
-
+  if (!classData) {
+    redirect("/not-found");
+  }
 
   return (
-  <Suspense fallback={<div className="text-gray-600 text-lg text-center mt-16">Loading class data...</div>}>
-    <ClassPage user={user} classData={classData} />
-  </Suspense>
+    <Suspense fallback={<div className="text-gray-600 text-lg text-center mt-16">Loading class data...</div>}>
+      <ClassPage user={user} classData={classData} />
+    </Suspense>
   );
 }
