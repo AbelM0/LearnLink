@@ -1,6 +1,5 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { User } from "next-auth";

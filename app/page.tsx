@@ -35,7 +35,7 @@ export default function Home() {
       setLoading(false);
     }
   
-  }, [status]);
+  }, [status, setClasses]);
   
 
   return (

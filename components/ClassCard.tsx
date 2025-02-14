@@ -1,5 +1,4 @@
 import React from 'react'
-import { useClassStore } from '@/Stores/useClassStore'
 import Link from 'next/link';
 import { Class } from '@/types/class-type';
 
@@ -8,7 +7,6 @@ interface classCardProps {
 }
 
 export const ClassCard = ({clsData}: classCardProps) => {
-  const { classes } = useClassStore();
   const cls = clsData;
 
   return (

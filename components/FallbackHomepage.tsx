@@ -7,13 +7,8 @@ import { Button } from "@/components/ui/button";
 
 import { useDialogStore } from "@/Stores/useDialogStore";
 
-type OpenDialogButtonProps = {
-  dialogName: string;
-  label: string;
-};
-
 function FallbackHomepage() {
-  const { openDialog, openDialogs } = useDialogStore();
+  const { openDialog } = useDialogStore();
 
   return (
     <div className="flex flex-col items-center">

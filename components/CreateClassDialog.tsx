@@ -67,7 +67,7 @@ export function CreateClassDialog() {
       <DialogContent className="sm:max-w-[400px] bg-[hsl(var(--dialog-background))] backdrop-blur-md border-border top-[30%] sm:top-[50%]">
         <DialogHeader>
           <DialogTitle>Create a Class</DialogTitle>
-          <DialogDescription>Click create when you're done.</DialogDescription>
+          <DialogDescription>{"Click create when you're done."}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">

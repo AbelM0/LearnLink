@@ -7,9 +7,7 @@ import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -17,8 +15,6 @@ import { useDialogStore } from "@/Stores/useDialogStore";
 import { Plus } from "lucide-react";
 import { CreateClassDialog } from "./CreateClassDialog"
 import { JoinClassDialog } from "./JoinClassDialog"
-
-type Checked = DropdownMenuCheckboxItemProps["checked"]
 
 export function CreateJoinDropdown() {
   const [ open, setOpen ] = useState(false);
