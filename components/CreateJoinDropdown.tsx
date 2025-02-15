@@ -27,7 +27,7 @@ export function CreateJoinDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="rounded-full border-border"  onClick={() => setOpen(true)}><Plus /></Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40 bg-background/75 backdrop-blur-md mr-3 border-border cursor-pointer items-center p-0" onBlur={() => {setOpen(false)}}>
+      <DropdownMenuContent className="w-40 bg-card/75 backdrop-blur-md mr-3 border-border cursor-pointer items-center p-0" onBlur={() => {setOpen(false)}}>
         <div className="text-center hover:bg-accent m-0 py-2" onClick={() => {
           openDialog("CreateClassDialog");
           setOpen(false)

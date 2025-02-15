@@ -23,7 +23,7 @@ function FallbackHomepage() {
           />
         <p className="text-center mt-2">Add a class to get started</p>
         <div className="flex gap-3 mt-2">
-          <Button className='border-black'  onClick={() => openDialog("CreateClassDialog")} variant={"outline"}>Create a class</Button>
+          <Button className='border-border'  onClick={() => openDialog("CreateClassDialog")} variant={"outline"}>Create a class</Button>
           <Button onClick={() => openDialog("JoinClassDialog")} >Join a class</Button>
         </div>
       </div>

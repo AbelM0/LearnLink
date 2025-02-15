@@ -53,7 +53,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
-      <SidebarContent className="bg-background/40 backdrop-blur-md">
+      <SidebarContent className="bg-card/40 backdrop-blur-md">
         <SidebarGroup>
           <VisuallyHidden>
             <SidebarGroupLabel>App Sidebar</SidebarGroupLabel>
@@ -75,7 +75,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className=" bg-card/40 backdrop-blur-md">
         <SidebarMenu>
           {user ? (
             <SidebarMenuItem>
@@ -88,7 +88,7 @@ export function AppSidebar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="top"
-                  className="w-[--radix-popper-anchor-width]"
+                  className="w-[--radix-popper-anchor-width] bg-card/75 backdrop-blur-md"
                 >
                   <DropdownMenuItem>
                     <span>Account</span>

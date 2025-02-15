@@ -39,15 +39,17 @@ export default function Home() {
   
 
   return (
-    <div className="flex items-center justify-center mt-16 px-6">
+    <div className="flex justify-center px-6 mx-auto mt-16 w-full">
       {loading  ? (
-        <p className="text-gray-600 text-lg">Loading...</p>
+        <p className="text-foreground/40 text-lg">Loading...</p>
       ) : dataFetched  && classes.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl">
-          {classes.map((cls, index) => (
-              <ClassCard clsData={cls} key={index}/>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+      xl:grid-cols-4 gap-x-1 xl:gap-x-6 gap-y-8 w-full max-w-7xl mx-auto place-items-center">
+        {classes.map((cls, index) => (
+          <ClassCard clsData={cls} key={index} />
+        ))}
+      </div>
+
       ) : dataFetched ? ( 
         <FallbackHomepage />
       ) : <p className="text-gray-600 text-lg">Sign in to continue.</p>}

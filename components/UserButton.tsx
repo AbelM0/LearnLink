@@ -33,7 +33,7 @@ export default function UserButton({ user }: UserButtonProps) {
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 rounded-lg border border-border bg-background/75 backdrop-blur-md mr-2">
+      <DropdownMenuContent className="w-56 rounded-lg border border-border bg-card/75 backdrop-blur-md mr-2">
         <DropdownMenuLabel>{user.name || "User"}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-border"/>
         <DropdownMenuGroup>

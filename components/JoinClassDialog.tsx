@@ -54,7 +54,7 @@ export function JoinClassDialog() {
       open={openDialogs["JoinClassDialog"] || false}
       onOpenChange={() => closeDialog("JoinClassDialog")}
     >
-      <DialogContent className="sm:max-w-[400px] bg-[hsl(var(--dialog-background))] backdrop-blur-md border-border top-[30%] sm:top-[50%]">
+      <DialogContent className="sm:max-w-[400px] bg-card/85 backdrop-blur-md border-border top-[30%] sm:top-[50%]">
         <DialogHeader>
           <DialogTitle>Join a Class</DialogTitle>
           <DialogDescription>Enter the class code to join.</DialogDescription>
