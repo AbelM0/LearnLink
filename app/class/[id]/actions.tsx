@@ -19,3 +19,25 @@ export const getClass = async (id: string) => {
       },
   });
 };
+
+export const getClassMembers = async (id: string) => {
+  const classId = Number(id);
+
+ const classMembers = await prisma.classUser.findMany({
+   where: { classId },
+   include: {
+     user: {
+       select: {
+         id: true,
+         name: true,
+         email: true,
+       },
+     },
+     // Include the role field directly from the classUser model
+   },
+ });
+
+ console.log("Class Members:", classMembers); // Log the fetched class members
+ return classMembers;
+
+}

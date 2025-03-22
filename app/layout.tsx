@@ -57,9 +57,9 @@ export default function RootLayout({
                 <AppSidebar/>
 
                 {/* Main Content */}
-                <main className="flex-grow ">
+                <main className="flex-grow">
                   <NavBar />
-                  <div className="p-4">{children}</div>
+                  <div className="p-2">{children}</div>
                   <Toaster />
                 </main>
               </div>

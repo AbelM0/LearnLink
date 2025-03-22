@@ -7,6 +7,7 @@ import { useClassStore } from "@/Stores/useClassStore";
 import { useSession } from "next-auth/react";
 import { Class } from "@/types/class-type";
 import { ClassCard } from "@/components/ClassCard";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ export default function Home() {
   return (
     <div className="flex justify-center px-6 mx-auto mt-16 w-full">
       {loading  ? (
-        <p className="text-foreground/40 text-lg">Loading...</p>
+        <Spinner />
       ) : dataFetched  && classes.length > 0 ? (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
       xl:grid-cols-4 gap-x-1 xl:gap-x-6 gap-y-8 w-full max-w-7xl mx-auto place-items-center">

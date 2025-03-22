@@ -2,8 +2,9 @@ import { Metadata } from "next";
 import ClassPage from "./ClassPage";
 import { redirect } from "next/navigation";
 import getSession from "@/lib/getSession";
-import { getClass } from "./actions";
+import { getClass, getClassMembers } from "./actions";
 import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 
 export const metadata: Metadata = {
@@ -26,14 +27,15 @@ export default async function Page({ params }: PageProps) {
   }
 
   const classData = await getClass(id);
+  const classMembers = await getClassMembers(id);
 
   if (!classData) {
     redirect("/not-found");
   }
 
   return (
-    <Suspense fallback={<div className="text-gray-600 text-lg text-center mt-16">Loading class data...</div>}>
-      <ClassPage user={user} classData={classData} />
+    <Suspense fallback={<Spinner />}>
+      <ClassPage user={user} classData={classData} classMembers={classMembers} />
     </Suspense>
   );
 }
