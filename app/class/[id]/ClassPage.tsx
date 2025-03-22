@@ -17,7 +17,6 @@ interface ClassPageProps {
 
 export default function ClassPage({
   user,
-  classData,
   classMembers,
 }: ClassPageProps) {
   const session = useSession();
