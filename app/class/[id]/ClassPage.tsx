@@ -18,6 +18,7 @@ interface ClassPageProps {
 export default function ClassPage({
   user,
   classMembers,
+  classData
 }: ClassPageProps) {
   const session = useSession();
   const status = session.status;
@@ -30,7 +31,7 @@ export default function ClassPage({
 
   return (
     <div className="flex flex-col gap-1 md:flex-row h-screen">
-      <ChannelList showChat={showChat} setShowChat={setShowChat} />
+      <ChannelList classData={classData} showChat={showChat} setShowChat={setShowChat} />
       <Chat showChat={showChat} setShowChat={setShowChat} setShowMembers={setShowMembers} />
       <ClassMembers showMembers={showMembers} setShowMembers={setShowMembers} classMembers={classMembers} />
     </div>

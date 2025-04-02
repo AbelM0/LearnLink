@@ -2,15 +2,18 @@
 
 import { useChannelStore } from "@/Stores/useChannelStore";
 import { Megaphone, MessageCircle, FileText } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 interface ChannelListProps {
   showChat: boolean;
   setShowChat: (value: boolean) => void;
+  classData: any;
 }
 
 export default function ChannelList({
   showChat,
   setShowChat,
+  classData
 }: ChannelListProps) {
   const { selectedChannel, setChannel } = useChannelStore();
 
@@ -20,13 +23,25 @@ export default function ChannelList({
     { name: "Materials", icon: <FileText className="w-5 h-5" /> },
   ];
 
+    const session = useSession();
+    const userId = session.data?.user.id;
+
   return (
     <div
       className={`w-full md:w-64 bg-card flex flex-col p-2 border rounded-md ${
         showChat ? "hidden md:flex" : "flex"
       }`}
     >
-      <h2 className="mb-2">TEXT CHANNELS</h2>
+      <div className="border-b pb-2 mb-2">
+        <h2 className="text-lg font-semibold">{classData.className}</h2>
+        <p className="text-sm ">{classData.subject}</p>
+        {userId === classData.ownerId && (
+          <p className="text-xs text-gray-400">
+            Class Code: {classData.classCode}
+          </p>
+        )}
+      </div>
+      <p className="mb-2">TEXT CHANNELS</p>
       <ul className="space-y-2">
         {channels.map(({ name, icon }) => (
           <li
