@@ -24,26 +24,26 @@ export const getClass = async (id: string) => {
 export const getClassMembers = async (id: string) => {
   const classId = Number(id);
 
- try {
-   const members = await prisma.classUser.findMany({
-     where: { classId },
-     select: {
-       id: true,
-       role: true,
-       user: {
-         select: {
-           id: true,
-           name: true,
-           email: true,
-         },
-       },
-     },
-   });
+  const members = await prisma.classUser.findMany({
+    where: { classId },
+    select: {
+      id: true,
+      role: true,
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
 
-   // Ensure we only return valid users
-   return members.filter((member) => member.user !== null);
- } catch (error) {
-   console.error("Error fetching class members:", error);
-   return [];
- }
-};
+  // Ensure the response structure matches `ClassMember`
+  return members.map((member) => ({
+    id: member.id, // Keep the classUser ID
+    role: member.role as "owner" | "member", // Ensure correct typing
+    user: member.user
+      ? { name: member.user.name || undefined, email: member.user.email }
+      : null, // Explicitly handle null users
+  }));
+  };
