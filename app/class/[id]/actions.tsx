@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma";
-import { ClassMember } from "@/types/class-type";
+
 
 export const getClass = async (id: string) => {
     const classId = Number(id)
