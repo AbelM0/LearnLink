@@ -1,13 +1,14 @@
 "use client";
 
 import { useChannelStore } from "@/Stores/useChannelStore";
+import { Class } from "@/types/class-type";
 import { Megaphone, MessageCircle, FileText } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface ChannelListProps {
   showChat: boolean;
   setShowChat: (value: boolean) => void;
-  classData: any;
+  classData: Class;
 }
 
 export default function ChannelList({
