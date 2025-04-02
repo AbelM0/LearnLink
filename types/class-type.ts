@@ -11,10 +11,11 @@ export interface Class {
   classCode: string;
 }
 
-export interface ClassMembers {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  user: User;
+export interface ClassMember {
+  id: number; 
+  role: "owner" | "member";
+  user: {
+    name?: string;
+    email: string;
+  } | null;
 }

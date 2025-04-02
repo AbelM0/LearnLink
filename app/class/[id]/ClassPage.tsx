@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { User } from "next-auth";
-import { Class } from "@/types/class-type";
+import { Class, ClassMember } from "@/types/class-type";
 import ChannelList from "@/components/ChannalList";
 import Chat from "@/components/Chat";
 import ClassMembers from "@/components/ClassMembers";
@@ -12,7 +12,7 @@ import ClassMembers from "@/components/ClassMembers";
 interface ClassPageProps {
   user: User;
   classData: Class;
-  classMembers: any[];
+  classMembers: ClassMember[];
 }
 
 export default function ClassPage({

@@ -1,6 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma";
+import { ClassMember } from "@/types/class-type";
 
 export const getClass = async (id: string) => {
     const classId = Number(id)
@@ -23,21 +24,26 @@ export const getClass = async (id: string) => {
 export const getClassMembers = async (id: string) => {
   const classId = Number(id);
 
- const classMembers = await prisma.classUser.findMany({
-   where: { classId },
-   include: {
-     user: {
-       select: {
-         id: true,
-         name: true,
-         email: true,
+ try {
+   const members = await prisma.classUser.findMany({
+     where: { classId },
+     select: {
+       id: true,
+       role: true,
+       user: {
+         select: {
+           id: true,
+           name: true,
+           email: true,
+         },
        },
      },
-     // Include the role field directly from the classUser model
-   },
- });
+   });
 
- console.log("Class Members:", classMembers); // Log the fetched class members
- return classMembers;
-
-}
+   // Ensure we only return valid users
+   return members.filter((member) => member.user !== null);
+ } catch (error) {
+   console.error("Error fetching class members:", error);
+   return [];
+ }
+};
