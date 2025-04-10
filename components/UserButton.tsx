@@ -23,7 +23,7 @@ export default function UserButton({ user }: UserButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" className="flex-none rounded-full">
+        <Button size="icon" className="flex-none rounded-full border-border">
           <Image
             src={user.image || avatarPlaceholder}
             alt="User profile picture"
@@ -35,20 +35,24 @@ export default function UserButton({ user }: UserButtonProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 rounded-lg border border-border bg-card/75 backdrop-blur-md mr-2">
         <DropdownMenuLabel>{user.name || "User"}</DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-border"/>
+        <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild className="focus:bg-accent/60">
             <Link href="/settings" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator/>
-        <DropdownMenuItem asChild >
-            <button onClick={() => signOut()} type="submit" className="flex w-full items-center cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" /> Sign Out
-            </button>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="focus:bg-accent/60">
+          <button
+            onClick={() => signOut()}
+            type="submit"
+            className="flex w-full items-center cursor-pointer"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sign Out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
