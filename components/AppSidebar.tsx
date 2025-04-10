@@ -77,7 +77,6 @@ export function AppSidebar() {
 
       <SidebarFooter className=" bg-card/40 backdrop-blur-md">
         <SidebarMenu>
-          {user ? (
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -102,13 +101,6 @@ export function AppSidebar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>
-          ) : (
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a href="/auth/signin">Sign in</a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

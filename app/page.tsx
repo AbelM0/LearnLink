@@ -53,7 +53,7 @@ export default function Home() {
 
       ) : dataFetched ? ( 
         <FallbackHomepage />
-      ) : <p className="text-gray-600 text-lg">Sign in to continue.</p>}
+      ) : <p className="text-foreground text-lg">Sign in to continue.</p>}
     </div>
   );
 }

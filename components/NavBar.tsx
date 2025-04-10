@@ -44,7 +44,7 @@ export default function NavBar() {
 function SignInButton() {
   return (
     <Button
-      className="border-black"
+      className="border-border"
       onClick={() => signIn()}
       variant={"outline"}
     >
