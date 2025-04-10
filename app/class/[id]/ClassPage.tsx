@@ -11,14 +11,12 @@ import { Class, ClassMember } from "@/types/class-type";
 
 interface ClassPageProps {
   user: User;
-  id: string;
   classData: Class;
   classMembers: ClassMember[];
 }
 
 export default function ClassPage({
   user,
-  id,
   classData,
   classMembers
 }: ClassPageProps) {

@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import ClassPage from "./ClassPage";
 import { redirect } from "next/navigation";
 import getSession from "@/lib/getSession";
 import { Suspense } from "react";

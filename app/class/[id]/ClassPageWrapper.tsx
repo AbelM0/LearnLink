@@ -19,7 +19,6 @@ export default async function ClassPageWrapper({ id, user }: Props) {
   return (
     <ClassPage
       user={user}
-      id={id}
       classData={classData}
       classMembers={classMembers}
     />
