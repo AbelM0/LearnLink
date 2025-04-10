@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import ClassPage from "./ClassPage";
 import { redirect } from "next/navigation";
 import getSession from "@/lib/getSession";
-import { getClass, getClassMembers } from "./actions";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import ClassPageWrapper from "./ClassPageWrapper";
 
 
 export const metadata: Metadata = {
@@ -26,16 +26,15 @@ export default async function Page({ params }: PageProps) {
     redirect(`/api/auth/signin?callbackUrl=/`);
   }
 
-  const classData = await getClass(id);
-  const classMembers = await getClassMembers(id);
-
-  if (!classData) {
-    redirect("/not-found");
-  }
-
   return (
-    <Suspense fallback={<Spinner />}>
-      <ClassPage user={user} classData={classData} classMembers={classMembers} />
+    <Suspense
+      fallback={
+        <div className="flex justify-center px-6 mx-auto mt-16 w-full">
+          <Spinner />
+        </div>
+      }
+    >
+      <ClassPageWrapper user={user} id={id} />
     </Suspense>
   );
 }

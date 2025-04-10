@@ -4,26 +4,33 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { User } from "next-auth";
-import { Class, ClassMember } from "@/types/class-type";
 import ChannelList from "@/components/ChannalList";
 import Chat from "@/components/Chat";
 import ClassMembers from "@/components/ClassMembers";
+import { Class, ClassMember } from "@/types/class-type";
 
 interface ClassPageProps {
   user: User;
+  id: string;
   classData: Class;
   classMembers: ClassMember[];
 }
 
 export default function ClassPage({
   user,
-  classMembers,
-  classData
+  id,
+  classData,
+  classMembers
 }: ClassPageProps) {
   const session = useSession();
   const status = session.status;
+
   const [showChat, setShowChat] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
+
+  if (!classData) {
+    redirect("/not-found");
+  }
 
   if (status !== "loading" && !user) {
     redirect("/");
