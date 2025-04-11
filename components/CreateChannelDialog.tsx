@@ -18,7 +18,6 @@ import { z } from "zod";
 import { createChannelSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createChannel } from "@/app/actions";
-import { redirect } from "next/navigation";
 import { getClassChannels } from "@/app/class/[id]/actions";
 import { Class } from "@/types/class-type";
 import { useChannelStore } from "@/Stores/useChannelStore";

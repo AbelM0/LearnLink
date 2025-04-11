@@ -28,7 +28,7 @@ export default function ChannelList({
      };
 
      fetchChannels();
-   }, [classData.id]);
+   }, [classData.id, setChannels]);
 
 
   const session = useSession();

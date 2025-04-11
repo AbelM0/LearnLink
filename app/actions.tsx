@@ -18,7 +18,7 @@ export async function createClass(values: CreateClassValues) {
 
   const { className, subject, description } = createClassSchema.parse(values);
 
-  const createdClass = await prisma.class.create({
+  await prisma.class.create({
     data: {
       className,
       subject,
@@ -41,6 +41,8 @@ export async function createClass(values: CreateClassValues) {
       },
     },
   });
+
+
 
   revalidatePath('/');
 }
@@ -129,19 +131,6 @@ export async function createChannel(values: CreateChannelValues) {
 
   const { name, classId } = createChannelSchema.parse(values);
 
-  // // Check if the user is part of the class (optional but recommended for auth)
-  // const isClassMember = await prisma.classUser.findFirst({
-  //   where: {
-  //     classId,
-  //     userId,
-  //   },
-  // });
-
-  // if (!isClassMember) {
-  //   throw new Error("You are not a member of this class");
-  // }
-
-  // Create the channel
   await prisma.channel.create({
     data: {
       name,
