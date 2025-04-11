@@ -64,33 +64,39 @@ export default function Chat({
   }, [channelId]);
 
   useEffect(() => {
-    if (userId) {
-      form.setValue("userId", userId);
-    }
-  }, [userId]);
-
-  useEffect(() => {
     if (channelId) {
       getChannelMessages(channelId).then(setMessages);
     }
   }, [channelId]);
 
-async function onSubmit(values: CreateMessageValues) {
-  if (!values.userId || !values.channelId) {
-    console.error("❌ Missing required values:", values);
-    return;
-  }
+  async function onSubmit(values: CreateMessageValues) {
+    const currentChannelId = getSelectedChannelId(); // always fresh
+    const currentUserId = session.data?.user.id;
 
-  try {
-    await createMessage(values);
-    form.reset({ content: "" }); // only reset content
-    const updatedMessages = await getChannelMessages(values.channelId);
-    setMessages(updatedMessages);
-  } catch (error) {
-    console.error("❌ Error creating message:", error);
-  }
-}
+    if (!currentChannelId || !currentUserId) {
+      console.error("❌ Missing required values:", {
+        currentChannelId,
+        currentUserId,
+        values,
+      });
+      return;
+    }
 
+    const payload = {
+      content: values.content,
+      userId: currentUserId,
+      channelId: currentChannelId,
+    };
+
+    try {
+      await createMessage(payload);
+      form.reset({ content: "" });
+      const updatedMessages = await getChannelMessages(currentChannelId);
+      setMessages(updatedMessages);
+    } catch (error) {
+      console.error("❌ Error creating message:", error);
+    }
+  }
 
   return (
     <div
