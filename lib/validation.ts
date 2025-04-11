@@ -1,3 +1,4 @@
+import { channel } from "diagnostics_channel";
 import { z } from "zod";
 
 export const updateProfileSchema = z.object({
@@ -18,6 +19,12 @@ export const createChannelSchema = z.object({
     required_error: "Class ID is required",
     invalid_type_error: "Class ID must be a number",
   }),
+});
+
+export const createMessageSchema = z.object({
+  content: z.string().trim().min(1, "Channel name cannot be empty"),
+  userId: z.coerce.string(),
+  channelId: z.coerce.number()
 });
 
 

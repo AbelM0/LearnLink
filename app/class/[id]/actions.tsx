@@ -1,6 +1,10 @@
 "use server"
 
 import { prisma } from "@/lib/prisma";
+import { createMessageSchema } from "@/lib/validation";
+import { z } from "zod"
+
+type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
 
 export const getClass = async (id: string) => {
@@ -70,3 +74,38 @@ export const getClassMembers = async (id: string) => {
       : null, // Explicitly handle null users
   }));
   };
+
+export async function createMessage(values: CreateMessageValues) {
+  const { content, userId, channelId } = values;
+
+  if (!content || !userId || !channelId) {
+    throw new Error(`Missing. Content:${content}, userId: ${userId}, channelId: ${channelId}`);
+  }
+
+  const newMessage = await prisma.message.create({
+    data: {
+      content,
+      userId,
+      channelId,
+    },
+  });
+
+  return newMessage;
+}
+
+export async function getChannelMessages(channelId: number) {
+  if (!channelId) {
+    throw new Error("Channel ID is required");
+  }
+
+  const messages = await prisma.message.findMany({
+    where: {
+      channelId: channelId,
+    },
+    orderBy: {
+      createdAt: "asc", // Ordering messages by the creation date
+    },
+  });
+
+  return messages;
+}

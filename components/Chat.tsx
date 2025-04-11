@@ -3,6 +3,13 @@
 import { useChannelStore } from "@/Stores/useChannelStore";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createMessageSchema } from "@/lib/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { createMessage, getChannelMessages } from "@/app/class/[id]/actions";
 
 interface ChatProps {
   showChat: boolean;
@@ -10,12 +17,80 @@ interface ChatProps {
   setShowMembers: (value: boolean) => void; // Toggle Members Dialog
 }
 
+interface Message {
+  content: string;
+  userId: string;
+  channelId: number;
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+type CreateMessageValues = z.infer<typeof createMessageSchema>;
+
 export default function Chat({
   showChat,
   setShowChat,
   setShowMembers,
 }: ChatProps) {
-  const { selectedChannel } = useChannelStore();
+  const { selectedChannel, getSelectedChannelId } = useChannelStore();
+
+  const [channelId, setChannelId] = useState<number | undefined>(undefined);
+
+  console.log("Current channelId:", channelId); // Check the value of channelId
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Ensure channelId has a valid default value
+  const form = useForm<CreateMessageValues>({
+    resolver: zodResolver(createMessageSchema),
+    defaultValues: {
+      content: ""
+    },
+  });
+
+  useEffect(() => {
+    const currentChannelId = getSelectedChannelId();
+    setChannelId(currentChannelId); // Update channelId state when selectedChannel changes
+  }, [selectedChannel, getSelectedChannelId]);
+
+  useEffect(() => {
+    if (channelId !== undefined) {
+      form.setValue("channelId", channelId);
+    }
+  }, [channelId]);
+
+  useEffect(() => {
+    if (userId) {
+      form.setValue("userId", userId);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (channelId) {
+      getChannelMessages(channelId).then(setMessages);
+    }
+  }, [channelId]);
+
+async function onSubmit(values: CreateMessageValues) {
+  if (!values.userId || !values.channelId) {
+    console.error("❌ Missing required values:", values);
+    return;
+  }
+
+  try {
+    await createMessage(values);
+    form.reset({ content: "" }); // only reset content
+    const updatedMessages = await getChannelMessages(values.channelId);
+    setMessages(updatedMessages);
+  } catch (error) {
+    console.error("❌ Error creating message:", error);
+  }
+}
+
 
   return (
     <div
@@ -50,19 +125,42 @@ export default function Chat({
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 rounded-md mt-4">
-        <p className="text-center">
-          No messages yet in #{selectedChannel.toLowerCase()}.
-        </p>
+      <div className="flex-1 overflow-y-auto space-y-1 rounded-md mt-4">
+        {messages.length > 0 ? (
+          messages.map((message) => (
+            <div
+              key={message.id}
+              className="border border-border p-2 rounded-md"
+            >
+              <div>{message.content}</div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center">
+            No messages yet in #{selectedChannel.toLowerCase()}.
+          </p>
+        )}
       </div>
 
       {/* Chat Input */}
       <div className="sticky bottom-2 left-0 w-full bg-accent p-1 rounded-lg border flex items-center gap-3">
-        <input
-          type="text"
-          placeholder={`Message #${selectedChannel.toLowerCase()}...`}
-          className="w-full p-2 bg-background rounded-lg outline-none placeholder-gray-400"
-        />
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            console.error(
+              `❌ Validation failed: userId: ${userId}, channelId: ${channelId}`,
+              errors
+            );
+          })}
+          className="w-full"
+        >
+          <input
+            {...form.register("content")}
+            type="text"
+            disabled={!channelId || !userId}
+            placeholder={`Message #${selectedChannel.toLowerCase()}...`}
+            className="w-full p-2 bg-background rounded-lg outline-none placeholder-gray-400"
+          />
+        </form>
       </div>
     </div>
   );

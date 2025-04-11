@@ -39,7 +39,7 @@ export default function ClassPage({
     <div className="flex flex-col gap-1 md:flex-row h-screen">
       <CreateChannelDialog classData={classData}/>
       <ChannelList classData={classData} showChat={showChat} setShowChat={setShowChat} />
-      <Chat showChat={showChat} setShowChat={setShowChat} setShowMembers={setShowMembers} />
+      <Chat  showChat={showChat} setShowChat={setShowChat} setShowMembers={setShowMembers} />
       <ClassMembers showMembers={showMembers} setShowMembers={setShowMembers} classMembers={classMembers} />
     </div>
   );
