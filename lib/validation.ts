@@ -1,4 +1,4 @@
-import { channel } from "diagnostics_channel";
+
 import { z } from "zod";
 
 export const updateProfileSchema = z.object({
