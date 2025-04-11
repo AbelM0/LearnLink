@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { createMessage, getChannelMessages } from "@/app/class/[id]/actions";
+import Message from "./Message";
 
 interface ChatProps {
   showChat: boolean;
@@ -134,12 +135,7 @@ export default function Chat({
       <div className="flex-1 overflow-y-auto space-y-1 rounded-md mt-4">
         {messages.length > 0 ? (
           messages.map((message) => (
-            <div
-              key={message.id}
-              className="border border-border p-2 rounded-md"
-            >
-              <div>{message.content}</div>
-            </div>
+            <Message data={message} key={message.id}/>
           ))
         ) : (
           <p className="text-center">
