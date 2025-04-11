@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { CreateClassValues, createClassSchema } from "@/lib/validation";
+import { CreateClassValues, createClassSchema, createChannelSchema, CreateChannelValues } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 ;
@@ -24,15 +24,21 @@ export async function createClass(values: CreateClassValues) {
       subject,
       description,
       classCode,
-      ownerId: userId, 
-    },
-  });
-
-  await prisma.classUser.create({
-    data: {
-      userId: userId,      
-      classId: createdClass.id, 
-      role: 'owner',
+      ownerId: userId,
+      users: {
+        connect: { id: userId },
+      },
+      ClassUser: {
+        create: {
+          userId: userId,
+          role: "owner",
+        },
+      },
+      Channels: {
+        create: {
+          name: "general",
+        },
+      },
     },
   });
 
@@ -111,6 +117,39 @@ export async function getUserClasses() {
   });
 
   return userClasses;
+}
+
+export async function createChannel(values: CreateChannelValues) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const { name, classId } = createChannelSchema.parse(values);
+
+  // // Check if the user is part of the class (optional but recommended for auth)
+  // const isClassMember = await prisma.classUser.findFirst({
+  //   where: {
+  //     classId,
+  //     userId,
+  //   },
+  // });
+
+  // if (!isClassMember) {
+  //   throw new Error("You are not a member of this class");
+  // }
+
+  // Create the channel
+  await prisma.channel.create({
+    data: {
+      name,
+      classId,
+    },
+  });
+
+  revalidatePath(`/class/${classId}`);
 }
 
 

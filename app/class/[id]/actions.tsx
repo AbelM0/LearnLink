@@ -21,6 +21,29 @@ export const getClass = async (id: string) => {
   });
 };
 
+export const getClassChannels = async(id: number) => {
+  const classId= id;
+
+   const channels = await prisma.class.findUnique({
+     where: { id: classId },
+     select: {
+       Channels: {
+         select: {
+           id: true,
+           name: true,
+           createdAt: true,
+         },
+         orderBy: {
+           createdAt: "asc",
+         },
+       },
+     },
+   });
+
+   return channels?.Channels || [];
+};
+
+
 export const getClassMembers = async (id: string) => {
   const classId = Number(id);
 

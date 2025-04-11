@@ -2,8 +2,11 @@
 
 import { useChannelStore } from "@/Stores/useChannelStore";
 import { Class } from "@/types/class-type";
-import { Megaphone, MessageCircle, FileText } from "lucide-react";
+import { Hash } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { getClassChannels } from "@/app/class/[id]/actions";
+import { useEffect } from "react";
+import  AddChannelButton  from "@/components/ui/AddChannelButton";
 
 interface ChannelListProps {
   showChat: boolean;
@@ -16,16 +19,20 @@ export default function ChannelList({
   setShowChat,
   classData
 }: ChannelListProps) {
-  const { selectedChannel, setChannel } = useChannelStore();
+  const { selectedChannel, setSelectedChannel, setChannels, channels } = useChannelStore();
 
-  const channels = [
-    { name: "Announcements", icon: <Megaphone className="w-5 h-5" /> },
-    { name: "General Chat", icon: <MessageCircle className="w-5 h-5" /> },
-    { name: "Materials", icon: <FileText className="w-5 h-5" /> },
-  ];
+   useEffect(() => {
+     const fetchChannels = async () => {
+       const fetchedChannels = await getClassChannels(classData.id);
+       setChannels(fetchedChannels);
+     };
 
-    const session = useSession();
-    const userId = session.data?.user.id;
+     fetchChannels();
+   }, [classData.id]);
+
+
+  const session = useSession();
+  const userId = session.data?.user.id;
 
   return (
     <div
@@ -42,20 +49,23 @@ export default function ChannelList({
           </p>
         )}
       </div>
-      <p className="mb-2">TEXT CHANNELS</p>
+      <div className="flex justify-between items-center mb-1">
+        <p>Text Channels</p>
+        {userId === classData.ownerId && <AddChannelButton />}
+      </div>
       <ul className="space-y-2">
-        {channels.map(({ name, icon }) => (
+        {channels.map(({ name }) => (
           <li
             key={name}
-            className={`flex items-center gap-2 p-2 rounded-md cursor-pointer transition ${
+            className={`flex items-center gap-2 p-1  rounded-md cursor-pointer transition ${
               selectedChannel === name ? "bg-accent" : "hover:bg-accent"
             }`}
             onClick={() => {
-              setChannel(name);
+              setSelectedChannel(name);
               setShowChat(true);
             }}
           >
-            {icon} {name}
+            {<Hash className="size-4"/>} {name}
           </li>
         ))}
       </ul>

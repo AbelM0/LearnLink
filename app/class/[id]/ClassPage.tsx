@@ -8,6 +8,7 @@ import ChannelList from "@/components/ChannalList";
 import Chat from "@/components/Chat";
 import ClassMembers from "@/components/ClassMembers";
 import { Class, ClassMember } from "@/types/class-type";
+import { CreateChannelDialog } from "@/components/CreateChannelDialog";
 
 interface ClassPageProps {
   user: User;
@@ -36,6 +37,7 @@ export default function ClassPage({
 
   return (
     <div className="flex flex-col gap-1 md:flex-row h-screen">
+      <CreateChannelDialog classData={classData}/>
       <ChannelList classData={classData} showChat={showChat} setShowChat={setShowChat} />
       <Chat showChat={showChat} setShowChat={setShowChat} setShowMembers={setShowMembers} />
       <ClassMembers showMembers={showMembers} setShowMembers={setShowMembers} classMembers={classMembers} />

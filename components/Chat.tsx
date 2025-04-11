@@ -57,13 +57,12 @@ export default function Chat({
       </div>
 
       {/* Chat Input */}
-      <div className="sticky bottom-2 left-0 w-full bg-accent p-3 rounded-lg border flex items-center gap-3">
+      <div className="sticky bottom-2 left-0 w-full bg-accent p-1 rounded-lg border flex items-center gap-3">
         <input
           type="text"
           placeholder={`Message #${selectedChannel.toLowerCase()}...`}
-          className="w-full p-2 bg-card rounded-lg outline-none placeholder-gray-400"
+          className="w-full p-2 bg-background rounded-lg outline-none placeholder-gray-400"
         />
-        <Button className="px-4 py-2 rounded-md">Send</Button>
       </div>
     </div>
   );

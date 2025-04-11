@@ -29,12 +29,6 @@ export function CreateClassDialog() {
   const { openDialogs, closeDialog } = useDialogStore();
   const { toast } = useToast();
   const { setClasses } = useClassStore();
-  // const session = useSession();
-  // const user = session.data?.user;
-
-  // if (!user) {
-  //   redirect("/api/auth/signin");
-  //  }
 
   const form = useForm<CreateClassValues>({
     resolver: zodResolver(createClassSchema),

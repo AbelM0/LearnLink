@@ -21,6 +21,7 @@ model User {
 
   classes    Class[]     @relation("ClassUsers")
   classUsers ClassUser[]
+  messages Message[]
 
   @@map("users")
 }
@@ -80,6 +81,7 @@ model Class {
 
   users     User[]      @relation("ClassUsers")
   ClassUser ClassUser[]
+  Channels Channel[]
 
   @@map("class")
   @@index([id])
@@ -98,3 +100,33 @@ model ClassUser {
 
   @@unique([userId, classId]) 
 }
+
+model Channel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  classId   Int
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([classId, name]) // Each class can have unique channel names
+  @@map("channel")
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  userId     String
+  channelId  Int
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("message")
+}
+
