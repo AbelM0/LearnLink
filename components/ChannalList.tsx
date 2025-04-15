@@ -36,7 +36,7 @@ export default function ChannelList({
 
   return (
     <div
-      className={`w-full md:w-64 bg-card flex flex-col p-2 border rounded-md ${
+      className={`w-full md:w-64 bg-card flex flex-col p-2 border rounded-md h-full ${
         showChat ? "hidden md:flex" : "flex"
       }`}
     >
