@@ -36,11 +36,23 @@ export default function ClassPage({
   }
 
   return (
-    <div className="flex flex-col gap-1 md:flex-row h-screen">
-      <CreateChannelDialog classData={classData}/>
-      <ChannelList classData={classData} showChat={showChat} setShowChat={setShowChat} />
-      <Chat  showChat={showChat} setShowChat={setShowChat} setShowMembers={setShowMembers} />
-      <ClassMembers showMembers={showMembers} setShowMembers={setShowMembers} classMembers={classMembers} />
+    <div className="flex flex-col gap-1 md:flex-row h-[calc(100vh-5rem)]">
+      <CreateChannelDialog classData={classData} />
+      <ChannelList
+        classData={classData}
+        showChat={showChat}
+        setShowChat={setShowChat}
+      />
+      <Chat
+        showChat={showChat}
+        setShowChat={setShowChat}
+        setShowMembers={setShowMembers}
+      />
+      <ClassMembers
+        showMembers={showMembers}
+        setShowMembers={setShowMembers}
+        classMembers={classMembers}
+      />
     </div>
   );
 }

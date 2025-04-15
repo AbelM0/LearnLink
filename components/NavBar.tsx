@@ -14,7 +14,7 @@ export default function NavBar() {
   const user = session.data?.user;
 
   return (
-    <div className="z-50 bg-card/75 sticky backdrop-blur-md top-0 px-6 border-b  w-full">
+    <div className="z-50 bg-card/75 sticky backdrop-blur-md top-0 px-6 border-b w-full">
       <nav className="mx-auto flex justify-between h-14 w-full items-center gap-3">
         <div className="flex items-center gap-3">
           <SidebarTrigger />

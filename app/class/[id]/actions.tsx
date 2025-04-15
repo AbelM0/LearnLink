@@ -105,27 +105,16 @@ export async function getChannelMessages(channelId: number) {
     orderBy: {
       createdAt: "asc", // Ordering messages by the creation date
     },
-  });
-
-  return messages;
-}
-
-export async function getUserInfo(userId: string) {
-  if (!userId) {
-    throw new Error("User ID is required");
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      name: true,
-      image: true,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+        },
+      },
     },
   });
 
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  return user;
+  return messages;
 }

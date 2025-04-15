@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { getUserInfo } from '@/app/class/[id]/actions';
+import React from 'react';
 import Image from 'next/image';
 import avatarPlaceholder from "@/assets/images/avatar_placeholder.png";
+import { formatDistanceToNow } from "date-fns";
 
 interface MessageProps {
   data: {
@@ -11,60 +11,42 @@ interface MessageProps {
     id: number;
     createdAt: Date;
     updatedAt: Date;
+    user: {
+      id: string;
+      name: string | null;
+      image: string | null;
+    }
   }
 }
 
 export default function Message({ data }: MessageProps) {
-   const [userData, setUserData] = useState<{
-     name: string | null;
-     image: string | null;
-   } | null>(null);
 
-   
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const user = await getUserInfo(data.userId);
-      setUserData(user);
-    };
+  const timeAgo = formatDistanceToNow(new Date(data.createdAt), {
+    addSuffix: true,
+  })
 
-    fetchUserInfo();
-  }, [data.userId]);
+return (
+    <div key={data.id} className="flex items-start space-x-3 py-1">
+      {/* Avatar */}
+      <div className="w-10 h-10 flex-shrink-0">
+        <Image
+          src={data.user.image || avatarPlaceholder}
+          alt="User profile picture"
+          width={40}
+          height={40}
+          className="rounded-full object-cover"
+        />
+      </div>
 
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    return new Date(date).toLocaleString("en-US", options);
-  };
-
-   if (!userData) {
-     return (
-       <div key={data.id}>
-         <p>Loading...</p>
-       </div>
-     );
-   }
-
-   const formattedDate = formatDate(data.createdAt);
-
-  return (
-    <div key={data.id} className="py-1 rounded-md flex gap-3">
-      <Image
-        src={userData.image || avatarPlaceholder}
-        alt="User profile picture"
-        width={50}
-        height={50}
-        className="aspect-square rounded-full bg-background object-cover"
-      />
-      <div className="items-center">
-        <div className='flex gap-4 items-center'>
-          <p className="text-gray-400">{userData.name}</p>
-          <p className="text-sm text-gray-500">{formattedDate}</p>
+      {/* Message Content */}
+      <div>
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-sm">
+            {data.user.name || 'Unknown'}
+          </span>
+          <span className="text-gray-500 text-xs">{timeAgo}</span>
         </div>
-
-        <div>{data.content}</div>
+        <p className="text-sm whitespace-pre-wrap">{data.content}</p>
       </div>
     </div>
   );

@@ -25,7 +25,13 @@ interface Message {
   id: number;
   createdAt: Date;
   updatedAt: Date;
+  user: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
 }
+
 
 type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
@@ -101,7 +107,7 @@ export default function Chat({
 
   return (
     <div
-      className={`flex-1 bg-card p-6 flex flex-col border rounded-md h-screen ${
+      className={`flex-1 bg-card p-6 flex flex-col border rounded-md h-full ${
         showChat ? "flex" : "hidden md:flex"
       }`}
     >
@@ -132,11 +138,11 @@ export default function Chat({
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto space-y-1 rounded-md mt-4">
+      <div className="flex-1 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-1 rounded-md mt-4">
         {messages.length > 0 ? (
-          messages.map((message) => (
-            <Message data={message} key={message.id}/>
-          ))
+          [...messages]
+            .reverse()
+            .map((message) => <Message data={message} key={message.id} />)
         ) : (
           <p className="text-center">
             No messages yet in #{selectedChannel.toLowerCase()}.
@@ -145,7 +151,7 @@ export default function Chat({
       </div>
 
       {/* Chat Input */}
-      <div className="sticky bottom-2 left-0 w-full bg-accent p-1 rounded-lg border flex items-center gap-3">
+      <div className="sticky bottom-2 left-0 w-full bg-accent p-1 rounded-lg border flex items-center gap-3 mt-4">
         <form
           onSubmit={form.handleSubmit(onSubmit, (errors) => {
             console.error(
