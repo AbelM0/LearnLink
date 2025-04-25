@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ClassMember } from "@/types/class-type";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
 
 interface ClassMembersProps {
   classMembers: ClassMember[];
@@ -26,8 +27,18 @@ export default function ClassMembers({
               <li key={member.id} className="flex items-center gap-2">
                 {member.user ? ( // Ensure user exists before accessing properties
                   member.role === "owner" ? (
-                    <p className="font-semibold text-yellow-400">
-                      👑 {member.user.name || member.user.email} (Owner)
+                    <p className="font-semibold flex gap-1">
+                      <TooltipProvider delayDuration={300}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p className="cursor-pointer">👑</p>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-card border border-border p-2 rounded-md text-sm">
+                            <p>Class Owner</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      {member.user.name || member.user.email}
                     </p>
                   ) : (
                     <span>👤 {member.user.name || member.user.email}</span>
@@ -64,8 +75,18 @@ export default function ClassMembers({
                   <li key={member.id} className="flex items-center gap-2">
                     {member.user ? ( // Ensure user exists before accessing properties
                       member.role === "owner" ? (
-                        <p className="font-semibold text-yellow-400">
-                          👑 {member.user.name || member.user.email} (Owner)
+                        <p className="font-semibold flex gap-1">
+                          <TooltipProvider delayDuration={300}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <p className="cursor-pointer">👑</p>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-card border border-border p-2 rounded-md text-sm">
+                                <p>Class Owner</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          {member.user.name || member.user.email}
                         </p>
                       ) : (
                         <span>👤 {member.user.name || member.user.email}</span>
