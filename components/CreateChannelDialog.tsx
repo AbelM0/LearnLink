@@ -57,7 +57,7 @@ export function CreateChannelDialog({classData}: ChannelDialogProps) {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to create channel. ${error}`,
+        description: `Failed to create channel.`,
       });
     }
   }

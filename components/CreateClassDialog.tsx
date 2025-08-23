@@ -51,7 +51,7 @@ export function CreateClassDialog() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to create class. ${error}`,
+        description: `Failed to create class`,
       });
     }
   }

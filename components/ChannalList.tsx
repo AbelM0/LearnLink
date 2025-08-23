@@ -54,15 +54,18 @@ export default function ChannelList({
         {userId === classData.ownerId && <AddChannelButton />}
       </div>
       <ul className="space-y-2">
-        {channels.map(({ name }) => (
+        {channels.map(({ id, name }) => (
           <li
-            key={name}
+            key={id}
             className={`flex items-center gap-2 p-1  rounded-md cursor-pointer transition ${
-              selectedChannel === name ? "bg-accent" : "hover:bg-accent"
+              selectedChannel && selectedChannel.id === id ? "bg-accent" : "hover:bg-accent"
             }`}
             onClick={() => {
-              setSelectedChannel(name);
-              setShowChat(true);
+              const channel = channels.find((ch) => ch.id === id);
+              if (channel) {
+                setSelectedChannel(channel);
+                setShowChat(true);
+              }
             }}
           >
             {<Hash className="size-4"/>} {name}

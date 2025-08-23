@@ -22,9 +22,9 @@ export const createChannelSchema = z.object({
 });
 
 export const createMessageSchema = z.object({
-  content: z.string().trim().min(1, "Channel name cannot be empty"),
+  content: z.string().trim().min(1, "Message cannot be empty"),
   userId: z.coerce.string(),
-  channelId: z.coerce.number()
+  channelId: z.coerce.number(),
 });
 
 

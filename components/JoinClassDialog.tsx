@@ -44,7 +44,7 @@ export function JoinClassDialog() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to join class. ${error}`,
+        description: `Failed to join class.`,
       });
     }
   }
