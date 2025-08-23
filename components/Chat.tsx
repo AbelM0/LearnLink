@@ -145,7 +145,6 @@ export default function Chat({
           channelId={selectedChannel.id}
           userId={userId}
           channelName={selectedChannel.name}
-          setMessages={setMessages}
         />
       )}
     </div>

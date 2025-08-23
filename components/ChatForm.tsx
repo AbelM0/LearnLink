@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createMessageSchema } from "@/lib/validation";
-import { createMessage, getChannelMessages } from "@/app/class/[id]/actions";
+import { createMessage } from "@/app/class/[id]/actions";
 import useSocket from "@/hooks/use-socket";
 
 type CreateMessageValues = z.infer<typeof createMessageSchema>;
@@ -27,14 +27,12 @@ interface ChatFormProps {
   channelId: number;
   userId: string;
   channelName: string;
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
 export default function ChatForm({
   channelId,
   userId,
   channelName,
-  setMessages,
 }: ChatFormProps) {
   const socket = useSocket();
 

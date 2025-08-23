@@ -59,6 +59,7 @@ export function CreateChannelDialog({classData}: ChannelDialogProps) {
         variant: "destructive",
         description: `Failed to create channel.`,
       });
+      console.error("Channel creation error:", error);
     }
   }
 

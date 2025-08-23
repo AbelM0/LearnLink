@@ -46,6 +46,7 @@ export function JoinClassDialog() {
         variant: "destructive",
         description: `Failed to join class.`,
       });
+      console.error("Class joining error:", error);
     }
   }
 

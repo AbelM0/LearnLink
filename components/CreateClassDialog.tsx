@@ -53,6 +53,7 @@ export function CreateClassDialog() {
         variant: "destructive",
         description: `Failed to create class`,
       });
+      console.error("Class creation error:", error);
     }
   }
 
