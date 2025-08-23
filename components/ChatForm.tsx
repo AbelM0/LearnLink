@@ -9,20 +9,6 @@ import useSocket from "@/hooks/use-socket";
 
 type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
-interface Message {
-  content: string;
-  userId: string;
-  channelId: number;
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-  user: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  };
-}
-
 interface ChatFormProps {
   channelId: number;
   userId: string;
