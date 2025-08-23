@@ -36,7 +36,7 @@ export default function ChatForm({
   channelName,
   setMessages,
 }: ChatFormProps) {
-  // const socket = useSocket();
+  const socket = useSocket();
 
   const id = userId;
   const channel_id = channelId;
@@ -66,12 +66,16 @@ export default function ChatForm({
 
   async function onSubmit(values: CreateMessageValues) {
     try {
-      // Create the message
+      // Create the message in backend
       await createMessage(values);
 
-      // Fetch updated messages
-      const updatedMessages = await getChannelMessages(channelId);
-      setMessages(updatedMessages);
+      // Emit message to socket server for real-time update
+      socket.current?.emit("message", {
+        ...values,
+        channelId,
+        userId,
+      });
+
 
       // Reset the form
       form.reset();

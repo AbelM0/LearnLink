@@ -5,7 +5,7 @@ export default function useSocket() {
   const socket = useRef<Socket | null>(null);
 
   useEffect(() => {
-    socket.current = io("http://localhost:4000", {
+    socket.current = io("https://learnlink-render-socket.onrender.com", {
       transports: ["websocket"],
     });
 

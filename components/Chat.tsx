@@ -1,5 +1,6 @@
 "use client";
 
+import useSocket from "@/hooks/use-socket";
 import { useChannelStore } from "@/Stores/useChannelStore";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users } from "lucide-react";
@@ -8,7 +9,6 @@ import { useState, useEffect } from "react";
 import { getChannelMessages } from "@/app/class/[id]/actions";
 import Message from "./Message";
 import ChatForm from "./ChatForm";
-
 
 interface ChatProps {
   showChat: boolean;
@@ -36,19 +36,60 @@ export default function Chat({
   setShowMembers,
 }: ChatProps) {
   const { selectedChannel } = useChannelStore();
+  const socket = useSocket();
 
   const session = useSession();
   const userId = session.data?.user.id;
 
-  console.log("Current channelId:", selectedChannel && selectedChannel.id);
-
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // Fetch messages when channel changes
   useEffect(() => {
     if (selectedChannel) {
       getChannelMessages(selectedChannel.id).then(setMessages);
     }
   }, [selectedChannel]);
+
+  // Join channel room and listen for real-time messages
+  useEffect(() => {
+    if (selectedChannel && socket.current) {
+      // Join the channel room
+      socket.current.emit(
+        "joinChannel",
+        selectedChannel.id,
+        session.data?.user?.name || "Unknown"
+      );
+
+      // Listen for new messages
+      const handleMessage = async (msg: {
+        content: string;
+        userId: string;
+        channelId: number;
+      }) => {
+        if (msg.channelId === selectedChannel.id) {
+          // Fetch the full message from the database
+          try {
+            const updatedMessages = await getChannelMessages(
+              selectedChannel.id
+            );
+            // Find the latest message (assuming it's the last one)
+            const latestMessage = updatedMessages[updatedMessages.length - 1];
+            if (latestMessage) {
+              setMessages((prev) => [...prev, latestMessage]);
+            }
+          } catch (error) {
+            console.error("Failed to fetch full message:", error);
+          }
+        }
+      };
+      socket.current.on("message", handleMessage);
+
+      // Cleanup on channel change/unmount
+      return () => {
+        socket.current?.off("message", handleMessage);
+      };
+    }
+  }, [selectedChannel, socket, session.data?.user?.name]);
 
   return (
     <div
@@ -68,7 +109,9 @@ export default function Chat({
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h2 className="font-semibold">#{selectedChannel && selectedChannel.name.toLowerCase()}</h2>
+          <h2 className="font-semibold">
+            #{selectedChannel && selectedChannel.name.toLowerCase()}
+          </h2>
         </div>
 
         {/* Members Button */}
@@ -90,7 +133,8 @@ export default function Chat({
             .map((message) => <Message data={message} key={message.id} />)
         ) : (
           <p className="text-center">
-            No messages yet in #{selectedChannel && selectedChannel.name.toLowerCase()}.
+            No messages yet in #
+            {selectedChannel && selectedChannel.name.toLowerCase()}.
           </p>
         )}
       </div>
@@ -107,4 +151,3 @@ export default function Chat({
     </div>
   );
 }
-
