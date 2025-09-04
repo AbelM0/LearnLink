@@ -22,14 +22,14 @@ export const ClassCard = ({ clsData }: classCardProps) => {
   return (
     <Link href={`/class/${clsData.id}`} key={clsData.id}>
       <div className="relative bg-card rounded-xl shadow-md border border-border transition-all hover:shadow-lg cursor-pointer hover:bg-accent w-[300px] h-[296px] overflow-hidden flex flex-col">
-        
         {/* Banner Image */}
         <div className="w-full h-[120px] relative rounded-t-xl overflow-hidden">
           <Image
-            src={randomBanner}
+            fill
+            src={clsData.imageUrl}
             alt="class banner image"
-            layout="fill"
-            objectFit="cover"
+            style={{ objectFit: "fill" }}
+            priority
             className="rounded-t-xl"
           />
         </div>
@@ -43,7 +43,9 @@ export const ClassCard = ({ clsData }: classCardProps) => {
           <p className="text-sm opacity-80">{clsData.subject}</p>
 
           {/* Description */}
-          <p className="text-xs mt-1 opacity-70 line-clamp-2">{truncatedDescription}</p>
+          <p className="text-xs mt-1 opacity-70 line-clamp-2">
+            {truncatedDescription}
+          </p>
 
           {/* Footer (Online & Members) - This stays at the bottom */}
           <div className="mt-auto flex justify-between text-xs opacity-60 pt-3 border-t border-border">

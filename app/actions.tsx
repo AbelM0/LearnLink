@@ -16,13 +16,14 @@ export async function createClass(values: CreateClassValues) {
 
   const classCode = generateClassCode(8);
 
-  const { className, subject, description } = createClassSchema.parse(values);
+  const { className, subject, description, imageUrl } = createClassSchema.parse(values);
 
   await prisma.class.create({
     data: {
       className,
       subject,
       description,
+      imageUrl,
       classCode,
       ownerId: userId,
       users: {

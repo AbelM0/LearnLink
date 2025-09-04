@@ -74,6 +74,7 @@ model Class {
   className   String
   subject     String
   description String
+  imageUrl    String
   ownerId     String
   classCode   String   @unique
   createdAt   DateTime @default(now())

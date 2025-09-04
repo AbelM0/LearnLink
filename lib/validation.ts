@@ -11,6 +11,7 @@ export const createClassSchema = z.object({
   className: z.string().trim().min(1, "Class name cannot be empty"),
   subject: z.string().trim().min(1, "Subject cannot be empty"),
   description: z.string().trim().min(1, "Description cannot be empty"),
+  imageUrl: z.string().trim().min(1, "Image URL cannot be empty"),
 });
 
 export const createChannelSchema = z.object({

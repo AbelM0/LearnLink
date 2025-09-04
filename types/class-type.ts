@@ -4,6 +4,7 @@ export interface Class {
   id: number;
   className: string;
   description: string;
+  imageUrl: string;
   subject: string;
   ownerId: string;
   createdAt: Date;
