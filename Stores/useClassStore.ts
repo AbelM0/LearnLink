@@ -5,6 +5,7 @@ interface Class {
   className: string;
   subject: string;
   description: string;
+  imageUrl: string;
   ownerId: string;
   createdAt: Date;
   updatedAt: Date;
