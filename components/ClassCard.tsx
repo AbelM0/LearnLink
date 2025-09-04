@@ -2,9 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Class } from '@/types/class-type';
-import bannerPlaceholder1 from "@/assets/images/codioful-formerly-gradienta-QWutu2BRpOs-unsplash.jpg";
-import bannerPlaceholder2 from "@/assets/images/codioful-formerly-gradienta-BgrRH1_ZI5Y-unsplash.jpg";
-import bannerPlaceholder3 from "@/assets/images/codioful-formerly-gradienta-gwE9vXSi7Xw-unsplash.jpg";
+
 
 interface classCardProps {
   clsData: Class;
@@ -15,9 +13,6 @@ export const ClassCard = ({ clsData }: classCardProps) => {
   const truncatedTitle = clsData.className.length > 30 ? clsData.className.slice(0, 27) + "..." : clsData.className;
   const truncatedDescription = clsData.description.length > 100 ? clsData.description.slice(0, 97) + "..." : clsData.description;
 
-  const banners = [bannerPlaceholder1, bannerPlaceholder2, bannerPlaceholder3];
-
-  const randomBanner = banners[Math.floor(Math.random() * banners.length)];
 
   return (
     <Link href={`/class/${clsData.id}`} key={clsData.id}>
