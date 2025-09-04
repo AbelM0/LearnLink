@@ -63,7 +63,7 @@ export function CreateClassDialog() {
       open={openDialogs["CreateClassDialog"] || false}
       onOpenChange={() => closeDialog("CreateClassDialog")}
     >
-      <DialogContent className="sm:max-w-[400px] bg-card/85 backdrop-blur-md border-border top-[30%] sm:top-[50%] w-[90%]">
+      <DialogContent className="sm:max-w-[400px] bg-card/85 backdrop-blur-md border-border top-[55%] sm:top-[50%] w-[95%] max-h-screen overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create a Class</DialogTitle>
           <DialogDescription>
