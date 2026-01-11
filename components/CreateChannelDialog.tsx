@@ -31,7 +31,7 @@ export function CreateChannelDialog({ classData }: ChannelDialogProps) {
   const { toast } = useToast();
   const { id } = classData;
 
-  const { mutateAsync: createChannel, isPending } = useCreateChannel(id);
+  const { mutateAsync: createChannel } = useCreateChannel(id);
 
   const form = useForm<CreateChannelValues>({
     resolver: zodResolver(createChannelSchema),
