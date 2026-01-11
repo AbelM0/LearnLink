@@ -5,10 +5,12 @@ import { useChannelStore } from "@/Stores/useChannelStore";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { getChannelMessages } from "@/app/class/[id]/actions";
+import { useEffect } from "react";
 import Message from "./Message";
 import ChatForm from "./ChatForm";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { useGetMessages } from "@/hooks/queries/use-chat-query";
 
 interface ChatProps {
   showChat: boolean;
@@ -37,18 +39,13 @@ export default function Chat({
 }: ChatProps) {
   const { selectedChannel } = useChannelStore();
   const socket = useSocket();
+  const queryClient = useQueryClient();
 
   const session = useSession();
   const userId = session.data?.user.id;
 
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  // Fetch messages when channel changes
-  useEffect(() => {
-    if (selectedChannel) {
-      getChannelMessages(selectedChannel.id).then(setMessages);
-    }
-  }, [selectedChannel]);
+  // Fetch messages using custom hook
+  const { data: messages = [] } = useGetMessages(selectedChannel?.id);
 
   // Join channel room and listen for real-time messages
   useEffect(() => {
@@ -67,19 +64,10 @@ export default function Chat({
         channelId: number;
       }) => {
         if (msg.channelId === selectedChannel.id) {
-          // Fetch the full message from the database
-          try {
-            const updatedMessages = await getChannelMessages(
-              selectedChannel.id
-            );
-            // Find the latest message (assuming it's the last one)
-            const latestMessage = updatedMessages[updatedMessages.length - 1];
-            if (latestMessage) {
-              setMessages((prev) => [...prev, latestMessage]);
-            }
-          } catch (error) {
-            console.error("Failed to fetch full message:", error);
-          }
+          // Invalidate query to refetch messages
+          queryClient.invalidateQueries({
+            queryKey: ["messages", selectedChannel.id],
+          });
         }
       };
       socket.current.on("message", handleMessage);
@@ -89,7 +77,7 @@ export default function Chat({
         socket.current?.off("message", handleMessage);
       };
     }
-  }, [selectedChannel, socket, session.data?.user?.name]);
+  }, [selectedChannel, socket, session.data?.user?.name, queryClient]);
 
   return (
     <div

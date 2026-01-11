@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
+
 import { UploadDropzone } from "@/lib/uploadthing";
 import { twMerge } from "tailwind-merge";
 // import "@uploadthing/react/styles.css";
 
 import { X } from "lucide-react";
 import Image from "next/image";
+import { toast } from "@/hooks/use-toast";
 
 interface FileUploadProps {
   endpoint: "messageFile" | "classImage";
@@ -14,9 +17,10 @@ interface FileUploadProps {
 }
 
 function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
+  const [dropzoneKey, setDropzoneKey] = useState(0);
 
   const fileType = value.split(".").pop();
-  if ( value && fileType !== "pdf" ) {
+  if (value && fileType !== "pdf") {
     return (
       <div className="relative h-40 w-40">
         <Image
@@ -25,7 +29,10 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
           alt="Uploaded file preview"
           className="rounded-md"
         />
-        <button onClick={() => onChange("")} className="bg-rose-500 p-1 rounded-full text-white absolute top-[-5px] right-[-5px] shadow-sm">
+        <button
+          onClick={() => onChange("")}
+          className="bg-rose-500 p-1 rounded-full text-white absolute top-[-5px] right-[-5px] shadow-sm"
+        >
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -38,7 +45,8 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
         appearance={{
           container:
             "bg-background border-2 border-dashed border-border rounded-xl",
-          button: "border border-border border-2 rounded-lg px-4 py-2 mt-2 cursor-pointer",
+          button:
+            "border border-border border-2 rounded-lg px-4 py-2 mt-2 cursor-pointer",
           allowedContent: "text-xs text-gray-500 mb-2",
           label: "font-bold text-lg mb-2",
           uploadIcon: "text-primary w-8 h-8 mb-2",
@@ -47,7 +55,15 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
         onClientUploadComplete={(res: { url: string }[]) =>
           onChange(res?.[0]?.url)
         }
-        onUploadError={(error: Error) => console.error("Upload error:", error)}
+        onUploadError={(error: Error) => {
+          onChange("");
+          setDropzoneKey((prev) => prev + 1);
+          toast({
+            title: "Upload failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        }}
       />
     </div>
   );

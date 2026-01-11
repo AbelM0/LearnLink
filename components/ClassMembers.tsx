@@ -3,7 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ClassMember } from "@/types/class-type";
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@radix-ui/react-tooltip";
 
 interface ClassMembersProps {
   classMembers: ClassMember[];
@@ -27,11 +33,11 @@ export default function ClassMembers({
               <li key={member.id} className="flex items-center gap-2">
                 {member.user ? ( // Ensure user exists before accessing properties
                   member.role === "owner" ? (
-                    <p className="font-semibold flex gap-1">
+                    <div className="font-semibold flex gap-1">
                       <TooltipProvider delayDuration={300}>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <p className="cursor-pointer">👑</p>
+                            <span className="cursor-pointer">👑</span>
                           </TooltipTrigger>
                           <TooltipContent className="bg-card border border-border p-2 rounded-md text-sm">
                             <p>Class Owner</p>
@@ -39,7 +45,7 @@ export default function ClassMembers({
                         </Tooltip>
                       </TooltipProvider>
                       {member.user.name || member.user.email}
-                    </p>
+                    </div>
                   ) : (
                     <span>👤 {member.user.name || member.user.email}</span>
                   )
@@ -61,7 +67,7 @@ export default function ClassMembers({
           <DialogContent className="p-2 bg-card/85 backdrop-blur-md border-border w-3/4">
             {/* Header with Close Button */}
             <div className="flex items-center justify-between border-b pb-1">
-              <p className="">Members</p>
+              <DialogTitle>Members</DialogTitle>
               <Button
                 className="bg-background hover:bg-background"
                 onClick={() => setShowMembers(false)}
@@ -75,11 +81,11 @@ export default function ClassMembers({
                   <li key={member.id} className="flex items-center gap-2">
                     {member.user ? ( // Ensure user exists before accessing properties
                       member.role === "owner" ? (
-                        <p className="font-semibold flex gap-1">
+                        <div className="font-semibold flex gap-1">
                           <TooltipProvider delayDuration={300}>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <p className="cursor-pointer">👑</p>
+                                <span className="cursor-pointer">👑</span>
                               </TooltipTrigger>
                               <TooltipContent className="bg-card border border-border p-2 rounded-md text-sm">
                                 <p>Class Owner</p>
@@ -87,7 +93,7 @@ export default function ClassMembers({
                             </Tooltip>
                           </TooltipProvider>
                           {member.user.name || member.user.email}
-                        </p>
+                        </div>
                       ) : (
                         <span>👤 {member.user.name || member.user.email}</span>
                       )

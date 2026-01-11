@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { getClassChannels } from "@/app/class/[id]/actions";
 import { useEffect } from "react";
 import  AddChannelButton  from "@/components/ui/AddChannelButton";
+import { ClassDropdownMenu } from "./ClassDropdownMenu";
 
 interface ChannelListProps {
   showChat: boolean;
@@ -41,13 +42,17 @@ export default function ChannelList({
       }`}
     >
       <div className="border-b pb-2 mb-2">
-        <h2 className="text-lg font-semibold">{classData.className}</h2>
+        <div className="flex justify-between items-center mb-1">
+          <h2 className="text-lg font-semibold">{classData.className}</h2>
+          { userId === classData.ownerId && <ClassDropdownMenu />}
+        </div>
+
         <p className="text-sm ">{classData.subject}</p>
-        {userId === classData.ownerId && (
+        {/* {userId === classData.ownerId && (
           <p className="text-xs text-gray-400">
             Class Code: {classData.classCode}
           </p>
-        )}
+        )} */}
       </div>
       <div className="flex justify-between items-center mb-1">
         <p>Text Channels</p>
@@ -58,7 +63,9 @@ export default function ChannelList({
           <li
             key={id}
             className={`flex items-center gap-2 p-1  rounded-md cursor-pointer transition ${
-              selectedChannel && selectedChannel.id === id ? "bg-accent" : "hover:bg-accent"
+              selectedChannel && selectedChannel.id === id
+                ? "bg-accent"
+                : "hover:bg-accent"
             }`}
             onClick={() => {
               const channel = channels.find((ch) => ch.id === id);
@@ -68,7 +75,7 @@ export default function ChannelList({
               }
             }}
           >
-            {<Hash className="size-4"/>} {name}
+            {<Hash className="size-4" />} {name}
           </li>
         ))}
       </ul>

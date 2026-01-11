@@ -1,10 +1,8 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import getSession from "@/lib/getSession";
-import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import ClassPageWrapper from "./ClassPageWrapper";
-
+import { getClass, getClassMembers } from "./actions";
 
 export const metadata: Metadata = {
   title: "Class",
@@ -13,7 +11,6 @@ export const metadata: Metadata = {
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
@@ -25,15 +22,23 @@ export default async function Page({ params }: PageProps) {
     redirect(`/api/auth/signin?callbackUrl=/`);
   }
 
+  const [classData, classMembers] = await Promise.all([
+    getClass(id),
+    getClassMembers(id),
+  ]);
+
+  if (!classData) {
+    // Or handle it in the wrapper, but handling here is fine too.
+    // Assuming wrapper handles detailed "Not Found" UI or we redirect.
+    // For now, passing null is fine as wrapper handles it.
+  }
+
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center px-6 mx-auto mt-16 w-full">
-          <Spinner />
-        </div>
-      }
-    >
-      <ClassPageWrapper user={user} id={id} />
-    </Suspense>
+    <ClassPageWrapper
+      user={user}
+      id={id}
+      initialClassData={classData}
+      initialClassMembers={classMembers}
+    />
   );
 }

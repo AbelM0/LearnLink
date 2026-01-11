@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createMessageSchema } from "@/lib/validation";
-import { createMessage } from "@/app/class/[id]/actions";
 import useSocket from "@/hooks/use-socket";
+import { useSendMessage } from "@/hooks/queries/use-chat-query";
 
 type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
@@ -34,6 +34,27 @@ export default function ChatForm({
     },
   });
 
+  const { mutate, isPending } = useSendMessage();
+
+  async function onSubmit(values: CreateMessageValues) {
+    mutate(values, {
+      onSuccess: (data, variables) => {
+        // Emit message to socket server for real-time update
+        socket.current?.emit("message", {
+          ...variables,
+          channelId,
+          userId,
+        });
+
+        // Reset the form
+        form.reset();
+      },
+      onError: (error) => {
+        console.error("Failed to send message:", error);
+      },
+    });
+  }
+
   useEffect(() => {
     form.reset({
       content: "",
@@ -42,33 +63,9 @@ export default function ChatForm({
     });
   }, [channel_id, id, form]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = form;
+  const { register, handleSubmit } = form;
 
-  async function onSubmit(values: CreateMessageValues) {
-    try {
-      // Create the message in backend
-      await createMessage(values);
-
-      // Emit message to socket server for real-time update
-      socket.current?.emit("message", {
-        ...values,
-        channelId,
-        userId,
-      });
-
-
-      // Reset the form
-      form.reset();
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
-  }
-
-  const isDisabled = !channelId || !userId || isSubmitting;
+  const isDisabled = !channelId || !userId || isPending;
 
   return (
     <div className="sticky bottom-2 left-0 w-full bg-accent p-1 rounded-lg border flex items-center gap-3 mt-4">
