@@ -17,7 +17,6 @@ interface FileUploadProps {
 }
 
 function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
-  const [dropzoneKey, setDropzoneKey] = useState(0);
 
   const fileType = value.split(".").pop();
   if (value && fileType !== "pdf") {
@@ -57,7 +56,6 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
         }
         onUploadError={(error: Error) => {
           onChange("");
-          setDropzoneKey((prev) => prev + 1);
           toast({
             title: "Upload failed",
             description: error.message,
