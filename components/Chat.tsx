@@ -11,6 +11,7 @@ import ChatForm from "./ChatForm";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useGetMessages } from "@/hooks/queries/use-chat-query";
+import MessageSkeleton from "./MessageSkeleton";
 
 interface ChatProps {
   showChat: boolean;
@@ -45,7 +46,9 @@ export default function Chat({
   const userId = session.data?.user.id;
 
   // Fetch messages using custom hook
-  const { data: messages = [] } = useGetMessages(selectedChannel?.id);
+  const { data: messages = [], isLoading } = useGetMessages(
+    selectedChannel?.id
+  );
 
   // Join channel room and listen for real-time messages
   useEffect(() => {
@@ -115,7 +118,9 @@ export default function Chat({
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-1 rounded-md mt-4">
-        {messages.length > 0 ? (
+        {isLoading ? (
+          <MessageSkeleton />
+        ) : messages.length > 0 ? (
           [...messages]
             .reverse()
             .map((message) => <Message data={message} key={message.id} />)

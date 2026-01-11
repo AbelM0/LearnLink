@@ -17,11 +17,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createChannelSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createChannel } from "@/app/actions";
-import { getClassChannels } from "@/app/class/[id]/actions";
 import { Class } from "@/types/class-type";
-import { useChannelStore } from "@/Stores/useChannelStore";
-
+import { useCreateChannel } from "@/hooks/queries/use-channel-query";
 
 interface ChannelDialogProps {
   classData: Class;
@@ -29,13 +26,12 @@ interface ChannelDialogProps {
 
 type CreateChannelValues = z.infer<typeof createChannelSchema>;
 
-export function CreateChannelDialog({classData}: ChannelDialogProps) {
+export function CreateChannelDialog({ classData }: ChannelDialogProps) {
   const { openDialogs, closeDialog } = useDialogStore();
   const { toast } = useToast();
-  const { setChannels } = useChannelStore();
   const { id } = classData;
 
-
+  const { mutateAsync: createChannel, isPending } = useCreateChannel(id);
 
   const form = useForm<CreateChannelValues>({
     resolver: zodResolver(createChannelSchema),
@@ -52,8 +48,6 @@ export function CreateChannelDialog({classData}: ChannelDialogProps) {
       toast({ description: "Channel created successfully!" });
       closeDialog("CreateChannelDialog");
       form.reset();
-      const Channels = await getClassChannels(id);
-      setChannels(Channels);
     } catch (error) {
       toast({
         variant: "destructive",
