@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { UploadDropzone } from "@/lib/uploadthing";
 import { twMerge } from "tailwind-merge";
 // import "@uploadthing/react/styles.css";
