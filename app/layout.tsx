@@ -8,6 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Providers } from "./providers";
+import { auth } from "@/auth";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,17 +39,19 @@ export const metadata: Metadata = {
   description: "Learnlink",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${comfortaa.className} ${roboto.variable} antialiased w-full min-h-screen flex`}
       >
-        <SessionProvider>
+        <SessionProvider session={session}>
           <Providers>
             <SidebarProvider defaultOpen={false}>
               
