@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createMessageSchema } from "@/lib/validation";
 import useSocket from "@/hooks/use-socket";
 import { useSendMessage } from "@/hooks/queries/use-chat-query";
-import { Plus, Loader2, X, FileIcon, Trash2 } from "lucide-react";
+import { Plus, Loader2, FileIcon, Trash2 } from "lucide-react";
 import FileUpload from "./FileUpload";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useState } from "react";
@@ -99,7 +99,7 @@ export default function ChatForm({
     setUploadedFiles([]);
   }, [channel_id, id, form]);
 
-  const { register, handleSubmit, setValue, watch } = form;
+  const { register, handleSubmit, setValue } = form;
 
   useEffect(() => {
     setValue("fileUrls", uploadedFiles, { shouldValidate: true });
@@ -116,7 +116,7 @@ export default function ChatForm({
       {/* File Preview List */}
       {uploadedFiles.length > 0 && (
         <div className="flex flex-wrap gap-4 p-4 bg-accent/50 rounded-lg border border-border">
-          {uploadedFiles.map((url, index) => (
+          {uploadedFiles.map((url) => (
             <div key={url} className="relative group w-48 h-48 bg-card rounded-md border border-border shadow-sm flex flex-col overflow-hidden">
               <div className="flex-1 relative bg-black/5 flex items-center justify-center">
                 {isImage(url) ? (
