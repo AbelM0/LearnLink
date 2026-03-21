@@ -77,15 +77,16 @@ export const getClassMembers = async (id: string) => {
   };
 
 export async function createMessage(values: CreateMessageValues) {
-  const { content, userId, channelId } = values;
+  const { content, fileUrls, userId, channelId } = values;
 
-  if (!content || !userId || !channelId) {
-    throw new Error(`Missing. Content:${content}, userId: ${userId}, channelId: ${channelId}`);
+  if ((!content && (!fileUrls || fileUrls.length === 0)) || !userId || !channelId) {
+    throw new Error(`Missing required fields. Content/Files: ${content || (fileUrls && fileUrls.join(","))}, userId: ${userId}, channelId: ${channelId}`);
   }
 
   const newMessage = await prisma.message.create({
     data: {
-      content,
+      content: content || null,
+      fileUrls: fileUrls || [],
       userId,
       channelId,
     },

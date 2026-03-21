@@ -118,7 +118,8 @@ model Channel {
 
 model Message {
   id         Int      @id @default(autoincrement())
-  content    String
+  content    String?
+  fileUrls   String[] @default([])
   userId     String
   channelId  Int
 
