@@ -4,7 +4,7 @@ import { UploadDropzone } from "@/lib/uploadthing";
 import { twMerge } from "tailwind-merge";
 // import "@uploadthing/react/styles.css";
 
-import { X } from "lucide-react";
+import { X, FileIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
 
@@ -16,8 +16,22 @@ interface FileUploadProps {
 
 function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
 
-  const fileType = value.split(".").pop();
-  if (value && fileType !== "pdf") {
+  const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "svg", "jfif", "avif", "bmp", "ico", "tiff"];
+
+  function getFileName(url: string) {
+    try {
+      const urlObj = new URL(url);
+      const nameStr = urlObj.searchParams.get("name");
+      if (nameStr) return nameStr;
+    } catch {}
+    return url.split("/").pop()?.split("-").slice(1).join("-") || url.split("/").pop() || "file";
+  }
+
+  const name = getFileName(value);
+  const fileType = name.split(".").pop()?.toLowerCase().split("?")[0];
+  const isImageFile = fileType ? IMAGE_EXTENSIONS.includes(fileType) : false;
+
+  if (value && isImageFile) {
     return (
       <div className="relative h-40 w-40">
         <Image
@@ -34,11 +48,23 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
         </button>
       </div>
     );
+  } else if (value && !isImageFile) {
+    return (
+      <div className="relative h-40 w-40 flex items-center justify-center bg-card border border-border rounded-md">
+        <FileIcon className="w-12 h-12 text-muted-foreground" />
+        <button
+          onClick={() => onChange("")}
+          className="bg-rose-500 p-1 rounded-full text-white absolute top-[-5px] right-[-5px] shadow-sm"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    );
   }
   return (
     <div>
       <UploadDropzone
-        config={{ cn: twMerge }}
+        config={{ mode: "auto", cn: twMerge }}
         appearance={{
           container:
             "bg-background border-2 border-dashed border-border rounded-xl",
@@ -49,9 +75,15 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
           uploadIcon: "text-primary w-8 h-8 mb-2",
         }}
         endpoint={endpoint}
-        onClientUploadComplete={(res: { url: string }[]) =>
-          onChange(res?.[0]?.url)
-        }
+        onClientUploadComplete={(res: { url: string; name: string }[]) => {
+          if (res?.[0]) {
+            const fileUrl = new URL(res[0].url);
+            if (res[0].name) {
+              fileUrl.searchParams.set("name", res[0].name);
+            }
+            onChange(fileUrl.toString());
+          }
+        }}
         onUploadError={(error: Error) => {
           onChange("");
           toast({

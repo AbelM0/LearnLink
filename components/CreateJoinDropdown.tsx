@@ -27,7 +27,7 @@ export function CreateJoinDropdown() {
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="rounded-full border-border"
+            className="rounded-full border-border bg-card"
             onClick={() => setOpen(true)}
           >
             <Plus />

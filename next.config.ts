@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       "lh3.googleusercontent.com",
       "avatars.githubusercontent.com",
       "utfs.io",
+      "static.klipy.com",
     ],
   },
 };

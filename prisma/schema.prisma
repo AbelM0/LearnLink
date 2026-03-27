@@ -22,8 +22,26 @@ model User {
   classes    Class[]     @relation("ClassUsers")
   classUsers ClassUser[]
   messages Message[]
+  favoriteGifs FavoriteGif[]
 
   @@map("users")
+}
+
+model FavoriteGif {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  klipyId   String   
+  url       String
+  width     Int
+  height    Int
+  title     String?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, klipyId])
+  @@map("favorite_gifs")
 }
 
 model Account {
@@ -118,7 +136,8 @@ model Channel {
 
 model Message {
   id         Int      @id @default(autoincrement())
-  content    String
+  content    String?
+  fileUrls   String[] @default([])
   userId     String
   channelId  Int
 

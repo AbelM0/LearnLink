@@ -23,9 +23,13 @@ export const createChannelSchema = z.object({
 });
 
 export const createMessageSchema = z.object({
-  content: z.string().trim().min(1, "Message cannot be empty"),
+  content: z.string().trim().optional(),
+  fileUrls: z.array(z.string()).optional(),
   userId: z.coerce.string(),
   channelId: z.coerce.number(),
+}).refine(data => data.content || (data.fileUrls && data.fileUrls.length > 0), {
+  message: "Either text content or a file must be provided",
+  path: ["content"] 
 });
 
 
