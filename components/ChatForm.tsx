@@ -214,7 +214,7 @@ export default function ChatForm({
                   </div>
                 </button>
               </PopoverTrigger>
-              <PopoverContent side="top" sideOffset={10} align="end" className="w-[450px] h-[500px] p-0 border-border rounded-xl bg-card mb-2">
+              <PopoverContent side="top" sideOffset={10} align="end" className="w-[calc(100vw-32px)] sm:w-[450px] h-[500px] p-0 border-border rounded-xl bg-card mb-2 overflow-hidden">
                 <GifPicker
                   onSelect={(url) => {
                     const currentContent = form.getValues("content");

@@ -341,7 +341,7 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
   const isShowingGrid = debouncedSearch || activeCategory;
 
   return (
-    <div className="max-w-[500px] h-full flex flex-col bg-card rounded-xl border border-border shadow-md overflow-hidden font-sans">
+    <div className="w-full h-full flex flex-col bg-card rounded-xl border border-border shadow-md overflow-hidden font-sans">
       {/* Search Header */}
       <div className="p-3 bg-card border-b border-border/40 shrink-0">
         <div className="relative flex items-center h-10">
