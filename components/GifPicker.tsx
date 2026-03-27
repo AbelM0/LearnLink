@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Loader2, X, TrendingUp, ArrowLeft, Star } from "lucide-react";
 import Image from "next/image";
 import { toggleFavoriteGif, getFavoriteGifs } from "@/actions/gif";
@@ -55,7 +55,7 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
   // Fetch user favorites on mount
   useEffect(() => {
     getFavoriteGifs().then((data) => {
-      setFavorites(data.map((f: any) => ({ klipyId: f.klipyId })));
+      setFavorites(data.map((f: { klipyId: string }) => ({ klipyId: f.klipyId })));
     }).catch(console.error);
   }, []);
 
@@ -111,7 +111,7 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
       try {
         if (activeCategory === "Favorites") {
           const favs = await getFavoriteGifs();
-          const mapped: KlipyGif[] = favs.map((f: any) => ({
+          const mapped: KlipyGif[] = favs.map((f: { klipyId: string; url: string; width: number; height: number; title: string | null }) => ({
             id: Number(f.klipyId) || Math.random(),
             slug: "",
             title: f.title || "",
