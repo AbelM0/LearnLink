@@ -11,6 +11,7 @@ import FileUpload from "./FileUpload";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useState } from "react";
 import Image from "next/image";
+import GifPicker from "./GifPicker";
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "svg", "jfif", "avif", "bmp", "ico", "tiff"];
 
@@ -49,6 +50,7 @@ export default function ChatForm({
 
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isGifPopoverOpen, setIsGifPopoverOpen] = useState(false);
 
   const form = useForm<CreateMessageValues>({
     resolver: zodResolver(createMessageSchema),
@@ -196,14 +198,56 @@ export default function ChatForm({
                 ? `Message #${channelName.toLowerCase()}...`
                 : "Select a channel to message"
             }
-            className="w-full p-2 bg-background rounded-lg outline-none placeholder-gray-400 disabled:opacity-50"
+            className="w-full py-2 pl-3 pr-14 bg-accent rounded-lg outline-none placeholder-gray-400 disabled:opacity-50"
             aria-disabled={isDisabled}
           />
-          {isPending && (
-            <div className="absolute right-3 flex items-center">
+          <div className="absolute right-3 flex items-center gap-2">
+            <Popover open={isGifPopoverOpen} onOpenChange={setIsGifPopoverOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  disabled={isDisabled}
+                  className="transition bg-foreground rounded disabled:opacity-50 hover:bg-foreground/80"
+                >
+                  <div className="flex text-background items-center justify-center font-bold text-[10px] h-5 px-[4px] rounded-sm">
+                    GIF
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="top" sideOffset={10} align="end" className="w-[450px] h-[500px] p-0 border-border rounded-xl bg-card mb-2">
+                <GifPicker
+                  onSelect={(url) => {
+                    const currentContent = form.getValues("content");
+                    mutate({
+                      content: currentContent,
+                      fileUrls: [...uploadedFiles, url],
+                      userId: id,
+                      channelId: channel_id,
+                    }, {
+                      onSuccess: (data, variables) => {
+                        socket.current?.emit("message", {
+                          ...variables,
+                          content: variables.content || " ",
+                          channelId,
+                          userId,
+                        });
+                        form.reset({ content: "", fileUrls: [], userId: id, channelId: channel_id });
+                        setUploadedFiles([]);
+                      },
+                      onError: (error) => {
+                        console.error("Failed to send GIF:", error);
+                      }
+                    });
+                    setIsGifPopoverOpen(false);
+                  }}
+                  onClose={() => setIsGifPopoverOpen(false)}
+                />
+              </PopoverContent>
+            </Popover>
+            {isPending && (
               <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
-            </div>
-          )}
+            )}
+          </div>
         </form>
       </div>
     </div>

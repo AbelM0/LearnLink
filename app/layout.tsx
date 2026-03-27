@@ -49,7 +49,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${comfortaa.className} ${roboto.variable} antialiased w-full min-h-screen flex`}
+        className={`${geistSans.variable} ${geistMono.variable} ${comfortaa.className} ${roboto.variable} antialiased w-full min-h-screen flex bg-background`}
       >
         <SessionProvider session={session}>
           <Providers>
