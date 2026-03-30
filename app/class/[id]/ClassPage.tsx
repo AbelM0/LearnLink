@@ -36,7 +36,7 @@ export default function ClassPage({
   }
 
   return (
-    <div className="flex flex-col gap-1 md:flex-row h-[calc(100vh-5rem)]">
+    <div className="flex flex-col gap-1 md:flex-row h-[calc(100vh-5rem)] w-full overflow-hidden">
       <CreateChannelDialog classData={classData} />
       <ChannelList
         classData={classData}

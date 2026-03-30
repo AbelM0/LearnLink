@@ -134,7 +134,7 @@ export default function Message({ data }: MessageProps) {
                             width={300}
                             height={200}
                             unoptimized={isGif}
-                            className="rounded-md object-cover max-w-xs flex-shrink-0 cursor-pointer hover:opacity-90 transition"
+                            className="rounded-md object-cover max-w-[200px] sm:max-w-xs flex-shrink-0 cursor-pointer hover:opacity-90 transition"
                           />
                         </DialogTrigger>
                         

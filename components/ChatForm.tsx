@@ -117,7 +117,7 @@ export default function ChatForm({
     <div className="sticky bottom-2 left-0 w-full flex flex-col gap-2 mt-4">
       {/* File Preview List */}
       {uploadedFiles.length > 0 && (
-        <div className="flex flex-wrap gap-4 p-4 bg-accent/50 rounded-lg border border-border">
+        <div className="flex flex-wrap gap-4 p-4 bg-accent/50 rounded-lg border border-border overflow-hidden">
           {uploadedFiles.map((url) => (
             <div key={url} className="relative group w-48 h-48 bg-card rounded-md border border-border shadow-sm flex flex-col overflow-hidden">
               <div className="flex-1 relative bg-black/5 flex items-center justify-center">
@@ -167,7 +167,7 @@ export default function ChatForm({
               <Plus className="text-foreground w-6 h-6" />
             </button>
           </PopoverTrigger>
-          <PopoverContent side="top" sideOffset={10} className="w-[300px] border-border bg-card">
+          <PopoverContent side="top" sideOffset={10} className="w-[calc(100vw-32px)] sm:w-[300px] border-border bg-card">
             <FileUpload
               endpoint="messageFile"
               value=""

@@ -84,7 +84,7 @@ export default function Chat({
 
   return (
     <div
-      className={`flex-1 bg-card p-6 flex flex-col border rounded-md h-full ${
+      className={`flex-1 bg-card p-3 md:p-6 flex flex-col border rounded-md h-full ${
         showChat ? "flex" : "hidden md:flex"
       }`}
     >
@@ -95,7 +95,7 @@ export default function Chat({
           <Button
             variant="outline"
             size="sm"
-            className="md:hidden flex items-center gap-1"
+            className="md:hidden flex items-center gap-1 bg-card"
             onClick={() => setShowChat(false)}
           >
             <ArrowLeft className="w-5 h-5" />
@@ -109,7 +109,7 @@ export default function Chat({
         <Button
           variant="outline"
           size="sm"
-          className="lg:hidden flex items-center gap-1"
+          className="lg:hidden flex items-center gap-1 bg-card"
           onClick={() => setShowMembers(true)}
         >
           <Users className="w-5 h-5" />

@@ -69,7 +69,7 @@ export default function ClassMembers({
             <div className="flex items-center justify-between border-b pb-1">
               <DialogTitle>Members</DialogTitle>
               <Button
-                className="bg-background hover:bg-background"
+                className="bg-card hover:bg-accent border border-border"
                 onClick={() => setShowMembers(false)}
               ></Button>
             </div>
