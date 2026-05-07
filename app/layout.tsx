@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Comfortaa, Roboto } from "next/font/google";
+import "@livekit/components-styles";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { Toaster } from "@/components/ui/toaster";

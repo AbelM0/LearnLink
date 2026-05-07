@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -30,7 +29,7 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --dialog-background:0 0% 98%;
+    --dialog-background: 0 0% 98%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -39,8 +38,8 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    --dialog-background: 0 0% 100% / 70%;
   }
+
   .dark {
     --background: 0 0% 6%;
     --foreground: 0 0% 98%;
@@ -76,21 +75,63 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
     --dialog-background: 0 0% 10% / 20%;
   }
-}
 
-/* Apply styles */
-@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-  /* Additional styling */
   .card {
     @apply bg-card text-card-foreground border border-card;
   }
   .input {
     @apply bg-input text-foreground border border-border;
   }
+}
+
+/* LiveKit UI Overrides for Theme Synchronization */
+.lk-prejoin {
+  @apply w-full max-w-full;
+  background-color: transparent !important;
+}
+
+.lk-video-container {
+  @apply overflow-hidden rounded-lg border border-border shadow-sm;
+}
+
+.lk-device-menu {
+  @apply absolute z-50 w-full min-w-[200px] max-w-full max-h-60 overflow-x-hidden overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none !important;
+}
+
+.lk-device-menu > li {
+  @apply relative flex w-full max-w-full items-center justify-start cursor-pointer select-none rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground overflow-hidden whitespace-nowrap text-left !important;
+}
+
+.lk-device-menu > li > * {
+  @apply block w-full text-left truncate !important;
+}
+
+.lk-device-menu > li[data-lk-active="true"] {
+  @apply bg-accent text-accent-foreground !important;
+}
+
+.lk-button-group {
+  @apply flex flex-wrap items-center gap-2 mt-4 w-full;
+}
+
+.lk-button {
+  @apply inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-accent px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 !important;
+}
+
+.lk-join-button {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 border-transparent !important;
+}
+
+.lk-form-control {
+  display: none !important;
+}
+
+.lk-device-menu-heading {
+  @apply font-semibold px-2 py-1.5 text-muted-foreground text-xs uppercase cursor-default !important;
 }

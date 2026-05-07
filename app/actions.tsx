@@ -14,36 +14,49 @@ export async function createClass(values: CreateClassValues) {
     throw Error("Unauthorized");
   }
 
+  // Check if session user actually exists in the database
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+
+  if (!userExists) {
+    console.error("User with ID", userId, "does not exist in the database! Stale session.");
+    throw new Error("Your user account was not found. Please log out and log back in.");
+  }
+
   const classCode = generateClassCode(8);
 
   const { className, subject, description, imageUrl } = createClassSchema.parse(values);
 
-  await prisma.class.create({
-    data: {
-      className,
-      subject,
-      description,
-      imageUrl,
-      classCode,
-      ownerId: userId,
-      users: {
-        connect: { id: userId },
-      },
-      ClassUser: {
-        create: {
-          userId: userId,
-          role: "owner",
+  try {
+    await prisma.class.create({
+      data: {
+        className,
+        subject,
+        description,
+        imageUrl,
+        classCode,
+        ownerId: userId,
+        users: {
+          connect: { id: userId },
+        },
+        ClassUser: {
+          create: {
+            user: { connect: { id: userId } },
+            role: "owner",
+          },
+        },
+        Channels: {
+          create: {
+            name: "general",
+          },
         },
       },
-      Channels: {
-        create: {
-          name: "general",
-        },
-      },
-    },
-  });
-
-
+    });
+  } catch (error) {
+    console.error("PRISMA CREATE CLASS ERROR:", error);
+    throw new Error("Failed to create class in database");
+  }
 
   revalidatePath('/');
 }
