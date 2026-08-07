@@ -72,7 +72,7 @@ export function CreateChannelDialog({ classData }: ChannelDialogProps) {
 
         <form
           onSubmit={form.handleSubmit(onSubmit, (errors) => {
-            console.error("❌ Validation failed:", errors);
+            console.error("Validation failed:", errors);
           })}
           className="grid gap-4 py-4"
         >

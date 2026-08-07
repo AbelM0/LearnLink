@@ -34,6 +34,7 @@ export default async function LivePage({ params }: LivePageProps) {
       className={liveSession.class.className}
       liveSessionId={liveSession.id}
       isHost={liveSession.hostId === user.id}
+      userName={user.name ?? user.email ?? "LearnLink User"}
     />
   );
 }

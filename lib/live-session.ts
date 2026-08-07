@@ -2,8 +2,8 @@ import "server-only";
 
 import { User } from "next-auth";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
 import { getRoomServiceClient } from "@/lib/livekit";
+import { prisma } from "@/lib/prisma";
 import { LiveSession } from "@/types/live-session";
 import { LiveSessionRole, Prisma } from "@prisma/client";
 
@@ -105,7 +105,7 @@ export async function ensureClassOwner(classId: number, userId: string) {
 }
 
 export function buildRoomName(classId: number) {
-  return `learnlink-class-${classId}-${crypto.randomUUID()}`;
+  return "learnlink-class-" + classId + "-" + crypto.randomUUID();
 }
 
 export async function getActiveLiveSessionByClassId(classId: number) {
@@ -176,7 +176,6 @@ export async function endLiveSessionForClass(classId: number, userId: string) {
   }
 
   const roomService = getRoomServiceClient();
-
   await roomService.deleteRoom(activeSession.roomName).catch(() => undefined);
 
   const endedSession = await prisma.liveSession.update({

@@ -15,7 +15,7 @@ import { LiveSessionRole } from "@prisma/client";
 function parseClassId(classId: number | string) {
   const value = Number(classId);
 
-  if (Number.isNaN(value)) {
+  if (!Number.isInteger(value) || value < 1) {
     throw new Error("Invalid class id");
   }
 
