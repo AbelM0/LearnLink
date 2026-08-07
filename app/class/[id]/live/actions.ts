@@ -3,10 +3,12 @@
 import { revalidatePath } from "next/cache";
 import {
   ensureClassAccess,
+  requireCurrentUser,
+} from "@/lib/class-access";
+import {
   endLiveSessionForClass,
   getActiveLiveSessionByClassId,
   markParticipantLeft,
-  requireCurrentUser,
   startLiveSessionForClass,
   upsertLiveSessionParticipant,
 } from "@/lib/live-session";

@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
+import { ensureClassOwner } from "@/lib/class-access";
 import { CreateClassValues, createClassSchema, createChannelSchema, CreateChannelValues } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -144,6 +145,8 @@ export async function createChannel(values: CreateChannelValues) {
   }
 
   const { name, classId } = createChannelSchema.parse(values);
+
+  await ensureClassOwner(classId, userId);
 
   await prisma.channel.create({
     data: {

@@ -1,7 +1,6 @@
 import "server-only";
 
-import { User } from "next-auth";
-import { auth } from "@/auth";
+import { ensureClassOwner } from "@/lib/class-access";
 import { getRoomServiceClient } from "@/lib/livekit";
 import { prisma } from "@/lib/prisma";
 import { LiveSession } from "@/types/live-session";
@@ -55,53 +54,6 @@ function toLiveSession(session: LiveSessionWithRelations | null) {
     ...session,
     participantCount: session.participants.length,
   } satisfies LiveSession;
-}
-
-export async function requireCurrentUser() {
-  const session = await auth();
-  const user = session?.user;
-
-  if (!user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  return user as User & { id: string };
-}
-
-export async function ensureClassAccess(classId: number, userId: string) {
-  const classUser = await prisma.classUser.findUnique({
-    where: {
-      userId_classId: {
-        userId,
-        classId,
-      },
-    },
-    include: {
-      class: {
-        select: {
-          id: true,
-          className: true,
-          ownerId: true,
-        },
-      },
-    },
-  });
-
-  if (!classUser) {
-    throw new Error("You do not have access to this class");
-  }
-
-  return classUser;
-}
-
-export async function ensureClassOwner(classId: number, userId: string) {
-  const membership = await ensureClassAccess(classId, userId);
-
-  if (membership.class.ownerId !== userId) {
-    throw new Error("Only the class owner can manage live sessions");
-  }
-
-  return membership.class;
 }
 
 export function buildRoomName(classId: number) {

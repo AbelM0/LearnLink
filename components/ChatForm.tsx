@@ -34,18 +34,15 @@ type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
 interface ChatFormProps {
   channelId: number;
-  userId: string;
   channelName: string;
   socket: Socket | null;
 }
 
 export default function ChatForm({
   channelId,
-  userId,
   channelName,
   socket,
 }: ChatFormProps) {
-  const id = userId;
   const channel_id = channelId;
 
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -57,7 +54,6 @@ export default function ChatForm({
     defaultValues: {
       content: "",
       fileUrls: [],
-      userId: id,
       channelId: channel_id,
     },
   });
@@ -71,17 +67,11 @@ export default function ChatForm({
     };
 
     mutate(submitValues, {
-      onSuccess: (data, variables) => {
-        // Emit message to socket server for real-time update
-        socket?.emit("message", {
-          ...variables,
-          content: variables.content || " ",
-          channelId,
-          userId,
-        });
+      onSuccess: (data) => {
+        socket?.emit("message", data);
 
         // Reset the form and local state
-        form.reset({ content: "", fileUrls: [], userId: id, channelId: channel_id });
+        form.reset({ content: "", fileUrls: [], channelId: channel_id });
         setUploadedFiles([]);
         setIsPopoverOpen(false);
       },
@@ -95,11 +85,10 @@ export default function ChatForm({
     form.reset({
       content: "",
       fileUrls: [],
-      userId: id,
       channelId: channel_id,
     });
     setUploadedFiles([]);
-  }, [channel_id, id, form]);
+  }, [channel_id, form]);
 
   const { register, handleSubmit, setValue } = form;
 
@@ -107,7 +96,7 @@ export default function ChatForm({
     setValue("fileUrls", uploadedFiles, { shouldValidate: true });
   }, [uploadedFiles, setValue]);
 
-  const isDisabled = !channelId || !userId || isPending;
+  const isDisabled = !channelId || isPending;
 
   const removeFile = (urlToRemove: string) => {
     setUploadedFiles((prev) => prev.filter((url) => url !== urlToRemove));
@@ -221,17 +210,11 @@ export default function ChatForm({
                     mutate({
                       content: currentContent,
                       fileUrls: [...uploadedFiles, url],
-                      userId: id,
                       channelId: channel_id,
                     }, {
-                      onSuccess: (data, variables) => {
-                        socket?.emit("message", {
-                          ...variables,
-                          content: variables.content || " ",
-                          channelId,
-                          userId,
-                        });
-                        form.reset({ content: "", fileUrls: [], userId: id, channelId: channel_id });
+                      onSuccess: (data) => {
+                        socket?.emit("message", data);
+                        form.reset({ content: "", fileUrls: [], channelId: channel_id });
                         setUploadedFiles([]);
                       },
                       onError: (error) => {

@@ -19,14 +19,13 @@ export const createChannelSchema = z.object({
   classId: z.coerce.number({
     required_error: "Class ID is required",
     invalid_type_error: "Class ID must be a number",
-  }),
+  }).int().positive(),
 });
 
 export const createMessageSchema = z.object({
-  content: z.string().trim().optional(),
-  fileUrls: z.array(z.string()).optional(),
-  userId: z.coerce.string(),
-  channelId: z.coerce.number(),
+  content: z.string().trim().max(4000, "Message is too long").optional(),
+  fileUrls: z.array(z.string().url()).max(10, "Too many attachments").optional(),
+  channelId: z.coerce.number().int().positive(),
 }).refine(data => data.content || (data.fileUrls && data.fileUrls.length > 0), {
   message: "Either text content or a file must be provided",
   path: ["content"] 
