@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Check,
   Copy,
+  Globe2,
   KeyRound,
   LoaderCircle,
   LockKeyhole,
@@ -78,6 +79,7 @@ export default function ClassSettings({ classData, members }: ClassSettingsProps
   const router = useRouter();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<ClassPermissionsValues>({
+    visibility: classData.visibility,
     isInviteEnabled: classData.isInviteEnabled,
     allowMemberMessages: classData.allowMemberMessages,
     allowMemberLiveParticipation: classData.allowMemberLiveParticipation,
@@ -311,6 +313,36 @@ export default function ClassSettings({ classData, members }: ClassSettingsProps
             description="Control how people join and what ordinary members can do. Owners and moderators keep management access."
           >
             <div className="space-y-6">
+              <div className="space-y-2">
+                <Label>Class visibility</Label>
+                <div className="grid gap-2 md:grid-cols-2">
+                  <VisibilityOption
+                    icon={KeyRound}
+                    title="Invite only"
+                    description="Hidden from Discover. People join using the class code when invitations are enabled."
+                    selected={permissions.visibility === "INVITE_ONLY"}
+                    onSelect={() =>
+                      setPermissions((current) => ({
+                        ...current,
+                        visibility: "INVITE_ONLY",
+                      }))
+                    }
+                  />
+                  <VisibilityOption
+                    icon={Globe2}
+                    title="Public"
+                    description="Listed in Discover. Any signed-in user can join without the class code."
+                    selected={permissions.visibility === "PUBLIC"}
+                    onSelect={() =>
+                      setPermissions((current) => ({
+                        ...current,
+                        visibility: "PUBLIC",
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="class-code">Class code</Label>
                 <div className="flex flex-col gap-2 sm:flex-row">
@@ -582,6 +614,43 @@ function SettingToggle({
         />
       </button>
     </div>
+  );
+}
+
+function VisibilityOption({
+  icon: Icon,
+  title,
+  description,
+  selected,
+  onSelect,
+}: {
+  icon: typeof Settings;
+  title: string;
+  description: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onSelect}
+      className={`flex min-h-28 items-start gap-3 rounded-lg border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+        selected
+          ? "border-primary bg-primary/5"
+          : "border-border bg-background hover:bg-accent"
+      }`}
+    >
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted">
+        <Icon className="size-4 text-muted-foreground" />
+      </div>
+      <div>
+        <p className="text-sm font-semibold">{title}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </button>
   );
 }
 

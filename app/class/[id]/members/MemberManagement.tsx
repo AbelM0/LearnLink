@@ -128,6 +128,7 @@ const auditCopy: Record<string, { label: string; icon: typeof History }> = {
   CLASS_PERMISSIONS_UPDATED: { label: "Class permissions were updated", icon: ShieldCheck },
   CLASS_INVITE_CODE_REGENERATED: { label: "The class code was regenerated", icon: Shield },
   CLASS_OWNERSHIP_TRANSFERRED: { label: "became the class owner", icon: Crown },
+  CLASS_VISIBILITY_UPDATED: { label: "Class visibility was updated", icon: ShieldCheck },
 };
 
 export default function MemberManagement({
@@ -456,7 +457,8 @@ function AuditLog({ entries }: { entries: AuditEntry[] }) {
         const isClassLevelAction =
           entry.action === "CLASS_DETAILS_UPDATED" ||
           entry.action === "CLASS_PERMISSIONS_UPDATED" ||
-          entry.action === "CLASS_INVITE_CODE_REGENERATED";
+          entry.action === "CLASS_INVITE_CODE_REGENERATED" ||
+          entry.action === "CLASS_VISIBILITY_UPDATED";
         return (
           <li key={entry.id} className="flex gap-3 p-3 md:p-4">
             <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted">

@@ -32,6 +32,7 @@ function revalidateClassSettings(classId: number) {
   revalidatePath(`/class/${classId}`);
   revalidatePath(`/class/${classId}/settings`);
   revalidatePath(`/class/${classId}/members`);
+  revalidatePath("/discover");
 }
 
 async function disconnectOrdinaryMembersFromLiveClass(classId: number) {
@@ -126,26 +127,44 @@ export async function updateClassPermissions(
   const data = classPermissionsSchema.parse(values);
   const current = await prisma.class.findUnique({
     where: { id: classId },
-    select: { allowMemberLiveParticipation: true },
+    select: {
+      visibility: true,
+      allowMemberLiveParticipation: true,
+    },
   });
 
   if (!current) throw new Error("Class not found");
 
-  await prisma.$transaction([
-    prisma.class.update({ where: { id: classId }, data }),
-    prisma.classAuditLog.create({
+  await prisma.$transaction(async (tx) => {
+    await tx.class.update({ where: { id: classId }, data });
+    await tx.classAuditLog.create({
       data: {
         classId,
         actorId: user.id,
         action: ClassAuditAction.CLASS_PERMISSIONS_UPDATED,
         reason: [
-          `Invites ${data.isInviteEnabled ? "enabled" : "disabled"}`,
+          `Visibility ${data.visibility === "PUBLIC" ? "public" : "invite only"}`,
+          `invites ${data.isInviteEnabled ? "enabled" : "disabled"}`,
           `member messages ${data.allowMemberMessages ? "enabled" : "disabled"}`,
           `member live participation ${data.allowMemberLiveParticipation ? "enabled" : "disabled"}`,
         ].join("; "),
       },
-    }),
-  ]);
+    });
+
+    if (current.visibility !== data.visibility) {
+      await tx.classAuditLog.create({
+        data: {
+          classId,
+          actorId: user.id,
+          action: ClassAuditAction.CLASS_VISIBILITY_UPDATED,
+          reason:
+            data.visibility === "PUBLIC"
+              ? "Class made public"
+              : "Class changed to invite only",
+        },
+      });
+    }
+  });
 
   if (
     current.allowMemberLiveParticipation &&

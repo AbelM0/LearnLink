@@ -30,6 +30,7 @@ export async function getClass(id: string) {
       imageUrl: true,
       ownerId: true,
       classCode: true,
+      visibility: true,
       isInviteEnabled: true,
       allowMemberMessages: true,
       allowMemberLiveParticipation: true,

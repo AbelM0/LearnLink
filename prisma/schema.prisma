@@ -94,18 +94,19 @@ model VerificationToken {
 }
 
 model Class {
-  id                           Int      @id @default(autoincrement())
+  id                           Int             @id @default(autoincrement())
   className                    String
   subject                      String
   description                  String
   imageUrl                     String
   ownerId                      String
-  classCode                    String   @unique
-  isInviteEnabled              Boolean  @default(true)
-  allowMemberMessages          Boolean  @default(true)
-  allowMemberLiveParticipation Boolean  @default(true)
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
+  classCode                    String          @unique
+  visibility                   ClassVisibility @default(INVITE_ONLY)
+  isInviteEnabled              Boolean         @default(true)
+  allowMemberMessages          Boolean         @default(true)
+  allowMemberLiveParticipation Boolean         @default(true)
+  createdAt                    DateTime        @default(now())
+  updatedAt                    DateTime        @updatedAt
 
   users        User[]          @relation("ClassUsers")
   ClassUser    ClassUser[]
@@ -115,6 +116,7 @@ model Class {
   auditLogs    ClassAuditLog[]
 
   @@index([id])
+  @@index([visibility, createdAt])
   @@map("class")
 }
 
@@ -260,4 +262,10 @@ enum ClassAuditAction {
   CLASS_PERMISSIONS_UPDATED
   CLASS_INVITE_CODE_REGENERATED
   CLASS_OWNERSHIP_TRANSFERRED
+  CLASS_VISIBILITY_UPDATED
+}
+
+enum ClassVisibility {
+  INVITE_ONLY
+  PUBLIC
 }

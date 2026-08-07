@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { useSession } from "next-auth/react";
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 // Menu items.
 const items = [
@@ -28,7 +29,7 @@ const items = [
   },
   {
     title: "Discover",
-    url: "#",
+    url: "/discover",
     icon: Telescope,
   },
   {
@@ -63,10 +64,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

@@ -43,6 +43,7 @@ export const classDetailsSchema = z.object({
 });
 
 export const classPermissionsSchema = z.object({
+  visibility: z.enum(["INVITE_ONLY", "PUBLIC"]),
   isInviteEnabled: z.boolean(),
   allowMemberMessages: z.boolean(),
   allowMemberLiveParticipation: z.boolean(),

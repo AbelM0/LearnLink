@@ -14,6 +14,7 @@ export interface Class {
   isInviteEnabled?: boolean;
   allowMemberMessages?: boolean;
   allowMemberLiveParticipation?: boolean;
+  visibility?: "INVITE_ONLY" | "PUBLIC";
 }
 
 export interface ClassMember {

@@ -35,6 +35,7 @@ export default async function ClassSettingsPage({ params }: ClassSettingsPagePro
         description: true,
         imageUrl: true,
         classCode: true,
+        visibility: true,
         isInviteEnabled: true,
         allowMemberMessages: true,
         allowMemberLiveParticipation: true,
