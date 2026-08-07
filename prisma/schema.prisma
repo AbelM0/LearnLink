@@ -25,6 +25,10 @@ model User {
   favoriteGifs            FavoriteGif[]
   hostedLiveSessions      LiveSession[]            @relation("HostedLiveSessions")
   liveSessionParticipants LiveSessionParticipant[]
+  classBans               ClassBan[]               @relation("BannedClassUser")
+  classBansIssued         ClassBan[]               @relation("ClassBanIssuer")
+  classAuditActions       ClassAuditLog[]          @relation("ClassAuditActor")
+  classAuditTargets       ClassAuditLog[]          @relation("ClassAuditTarget")
 
   @@map("users")
 }
@@ -90,37 +94,81 @@ model VerificationToken {
 }
 
 model Class {
-  id          Int      @id @default(autoincrement())
-  className   String
-  subject     String
-  description String
-  imageUrl    String
-  ownerId     String
-  classCode   String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                           Int      @id @default(autoincrement())
+  className                    String
+  subject                      String
+  description                  String
+  imageUrl                     String
+  ownerId                      String
+  classCode                    String   @unique
+  isInviteEnabled              Boolean  @default(true)
+  allowMemberMessages          Boolean  @default(true)
+  allowMemberLiveParticipation Boolean  @default(true)
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
 
-  users        User[]        @relation("ClassUsers")
+  users        User[]          @relation("ClassUsers")
   ClassUser    ClassUser[]
   Channels     Channel[]
   liveSessions LiveSession[]
+  bans         ClassBan[]
+  auditLogs    ClassAuditLog[]
 
   @@index([id])
   @@map("class")
 }
 
 model ClassUser {
-  id      Int    @id @default(autoincrement())
-  userId  String
-  classId Int
-  role    String
+  id            Int       @id @default(autoincrement())
+  userId        String
+  classId       Int
+  role          String
+  timeoutUntil  DateTime?
+  timeoutReason String?
 
   user  User  @relation(fields: [userId], references: [id])
-  class Class @relation(fields: [classId], references: [id])
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, classId])
+}
+
+model ClassBan {
+  id         Int      @id @default(autoincrement())
+  classId    Int
+  userId     String
+  bannedById String
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  class    Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  user     User  @relation("BannedClassUser", fields: [userId], references: [id], onDelete: Cascade)
+  bannedBy User  @relation("ClassBanIssuer", fields: [bannedById], references: [id], onDelete: Cascade)
+
+  @@unique([userId, classId])
+  @@index([classId, createdAt])
+  @@map("class_ban")
+}
+
+model ClassAuditLog {
+  id           Int              @id @default(autoincrement())
+  classId      Int
+  actorId      String
+  targetUserId String?
+  action       ClassAuditAction
+  reason       String?
+  expiresAt    DateTime?
+  createdAt    DateTime         @default(now())
+
+  class  Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  actor  User  @relation("ClassAuditActor", fields: [actorId], references: [id], onDelete: Cascade)
+  target User? @relation("ClassAuditTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([classId, createdAt])
+  @@index([targetUserId])
+  @@map("class_audit_log")
 }
 
 model Channel {
@@ -198,4 +246,18 @@ enum LiveSessionStatus {
 enum LiveSessionRole {
   HOST
   PARTICIPANT
+}
+
+enum ClassAuditAction {
+  MEMBER_JOINED
+  MEMBER_PROMOTED
+  MEMBER_DEMOTED
+  MEMBER_TIMED_OUT
+  MEMBER_TIMEOUT_REMOVED
+  MEMBER_BANNED
+  MEMBER_UNBANNED
+  CLASS_DETAILS_UPDATED
+  CLASS_PERMISSIONS_UPDATED
+  CLASS_INVITE_CODE_REGENERATED
+  CLASS_OWNERSHIP_TRANSFERRED
 }

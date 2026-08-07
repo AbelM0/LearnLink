@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createMessageSchema } from "@/lib/validation";
@@ -12,6 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useState } from "react";
 import Image from "next/image";
 import GifPicker from "./GifPicker";
+import { useToast } from "@/hooks/use-toast";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "svg", "jfif", "avif", "bmp", "ico", "tiff"];
 
@@ -48,6 +50,7 @@ export default function ChatForm({
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isGifPopoverOpen, setIsGifPopoverOpen] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<CreateMessageValues>({
     resolver: zodResolver(createMessageSchema),
@@ -76,8 +79,28 @@ export default function ChatForm({
         setIsPopoverOpen(false);
       },
       onError: (error) => {
-        console.error("Failed to send message:", error);
+        toast({
+          variant: "destructive",
+          title: "Message not sent",
+          description: getUserFacingError(
+            error,
+            "We could not send your message. Please try again.",
+          ),
+        });
       },
+    });
+  }
+
+  function onInvalidSubmit(errors: FieldErrors<CreateMessageValues>) {
+    const validationMessage = errors.content?.message;
+
+    toast({
+      variant: "destructive",
+      title: "Message not sent",
+      description:
+        typeof validationMessage === "string"
+          ? validationMessage
+          : "Add a message or attachment before sending.",
     });
   }
 
@@ -171,10 +194,7 @@ export default function ChatForm({
         </Popover>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit(onSubmit)();
-          }}
+          onSubmit={handleSubmit(onSubmit, onInvalidSubmit)}
           className="relative w-full flex items-center"
         >
           <input
@@ -218,7 +238,14 @@ export default function ChatForm({
                         setUploadedFiles([]);
                       },
                       onError: (error) => {
-                        console.error("Failed to send GIF:", error);
+                        toast({
+                          variant: "destructive",
+                          title: "GIF not sent",
+                          description: getUserFacingError(
+                            error,
+                            "We could not send that GIF. Please try again.",
+                          ),
+                        });
                       }
                     });
                     setIsGifPopoverOpen(false);

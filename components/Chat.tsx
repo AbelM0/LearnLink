@@ -17,6 +17,7 @@ interface ChatProps {
   showChat: boolean;
   setShowChat: (value: boolean) => void;
   setShowMembers: (value: boolean) => void; // Toggle Members Dialog
+  canSendMessages: boolean;
 }
 
 interface Message {
@@ -37,6 +38,7 @@ export default function Chat({
   showChat,
   setShowChat,
   setShowMembers,
+  canSendMessages,
 }: ChatProps) {
   const { selectedChannel } = useChannelStore();
   const socket = useSocket();
@@ -126,13 +128,17 @@ export default function Chat({
       </div>
 
       {/* Chat Input */}
-      {selectedChannel && userId !== undefined && (
+      {selectedChannel && userId !== undefined && canSendMessages ? (
         <ChatForm
           channelId={selectedChannel.id}
           channelName={selectedChannel.name}
           socket={socket}
         />
-      )}
+      ) : selectedChannel && userId !== undefined ? (
+        <div className="mt-4 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+          The class owner has disabled messaging for members.
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -16,6 +16,8 @@ import {
   useStartLiveSession,
 } from "@/hooks/queries/use-live-query";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 interface ChannelListProps {
   showChat: boolean;
@@ -30,6 +32,7 @@ export default function ChannelList({
 }: ChannelListProps) {
   const { selectedChannel, setSelectedChannel } = useChannelStore();
   const router = useRouter();
+  const { toast } = useToast();
 
   const { data: channels = [], isLoading } = useGetChannels(classData.id);
   const { data: activeLiveSession, isLoading: isLoadingLiveSession } =
@@ -52,6 +55,11 @@ export default function ChannelList({
   const session = useSession();
   const userId = session.data?.user.id;
   const isOwner = userId === classData.ownerId;
+  const canManageMembers =
+    isOwner ||
+    classData.currentUserRole === "moderator";
+  const canJoinLiveClass =
+    canManageMembers || classData.allowMemberLiveParticipation !== false;
   const isLive = !!activeLiveSession;
 
   async function handleStartLiveSession() {
@@ -60,7 +68,14 @@ export default function ChannelList({
       router.push(`/class/${classData.id}/live`);
       router.refresh();
     } catch (error) {
-      console.error("Failed to start live class:", error);
+      toast({
+        variant: "destructive",
+        title: "Live class could not start",
+        description: getUserFacingError(
+          error,
+          "We could not start the live class. Please try again.",
+        ),
+      });
     }
   }
 
@@ -69,7 +84,14 @@ export default function ChannelList({
       await endLiveSessionMutation.mutateAsync();
       router.refresh();
     } catch (error) {
-      console.error("Failed to end live class:", error);
+      toast({
+        variant: "destructive",
+        title: "Live class could not end",
+        description: getUserFacingError(
+          error,
+          "We could not end the live class. Please try again.",
+        ),
+      });
     }
   }
 
@@ -82,7 +104,13 @@ export default function ChannelList({
       <div className="border-b pb-2 mb-2">
         <div className="flex justify-between items-center mb-1">
           <h2 className="text-lg font-semibold">{classData.className}</h2>
-          {userId === classData.ownerId && <ClassDropdownMenu classCode={classData.classCode} />}
+          {canManageMembers ? (
+            <ClassDropdownMenu
+              classId={classData.id}
+              classCode={classData.classCode}
+              isOwner={isOwner}
+            />
+          ) : null}
         </div>
 
         <p className="text-sm ">{classData.subject}</p>
@@ -128,7 +156,7 @@ export default function ChannelList({
         ) : null}
 
         <div className="flex flex-col gap-2">
-          {isLive ? (
+          {isLive && canJoinLiveClass ? (
             <Button
               className="w-full gap-2"
               onClick={() => router.push(`/class/${classData.id}/live`)}
@@ -136,6 +164,10 @@ export default function ChannelList({
               <Video className="size-4" />
               Join live class
             </Button>
+          ) : isLive ? (
+            <div className="rounded-lg border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
+              Member participation is disabled for this live class.
+            </div>
           ) : isOwner ? (
             <Button
               className="w-full gap-2"

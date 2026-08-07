@@ -7,6 +7,8 @@ import { formatDistanceToNow } from "date-fns";
 import { FileIcon, Star, Download, X } from "lucide-react";
 import { toggleFavoriteGif, getFavoriteGifs } from "@/actions/gif";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 interface MessageProps {
   data: {
@@ -50,7 +52,7 @@ export default function Message({ data }: MessageProps) {
     if (hasGifs) {
       getFavoriteGifs()
         .then(favs => setFavorites(favs.map(f => ({ url: f.url }))))
-        .catch(console.error);
+        .catch(() => undefined);
     }
   }, [data.fileUrls]);
 
@@ -77,7 +79,14 @@ export default function Message({ data }: MessageProps) {
         title: "Saved from Chat",
       });
     } catch (err) {
-      console.error("Failed to toggle favorite:", err);
+      toast({
+        variant: "destructive",
+        title: "Favorite not updated",
+        description: getUserFacingError(
+          err,
+          "We could not update this favorite.",
+        ),
+      });
       // Revert optimistic
       if (isFav) setFavorites((prev) => [...prev, { url }]);
       else setFavorites((prev) => prev.filter((f) => f.url !== url));

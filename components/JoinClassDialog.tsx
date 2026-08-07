@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { joinClass, getUserClasses } from "@/app/actions";
 import { useClassStore } from "@/Stores/useClassStore";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 const joinClassSchema = z.object({
   classCode: z.string().trim().min(1, "Class code is required"),
@@ -44,9 +45,12 @@ export function JoinClassDialog() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to join class.`,
+        title: "Could not join class",
+        description: getUserFacingError(
+          error,
+          "Check the class code and try again.",
+        ),
       });
-      console.error("Class joining error:", error);
     }
   }
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createParticipantToken, getLiveKitWsUrl } from "@/lib/livekit";
 import {
-  ensureClassAccess,
+  ensureCanJoinClassLiveSession,
   requireCurrentUser,
 } from "@/lib/class-access";
 import {
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
   try {
     const user = await requireCurrentUser();
-    await ensureClassAccess(classId, user.id);
+    await ensureCanJoinClassLiveSession(classId, user.id);
 
     const liveSession = await getActiveLiveSessionByClassId(classId);
 
@@ -78,7 +78,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (message === "You do not have access to this class") {
+    if (
+      message === "You do not have access to this class" ||
+      message.startsWith("You are timed out from this class") ||
+      message === "Member participation is disabled for this live class"
+    ) {
       return NextResponse.json({ error: message }, { status: 403 });
     }
 

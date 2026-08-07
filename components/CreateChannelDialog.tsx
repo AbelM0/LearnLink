@@ -19,6 +19,7 @@ import { createChannelSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Class } from "@/types/class-type";
 import { useCreateChannel } from "@/hooks/queries/use-channel-query";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 interface ChannelDialogProps {
   classData: Class;
@@ -43,7 +44,6 @@ export function CreateChannelDialog({ classData }: ChannelDialogProps) {
 
   async function onSubmit(values: CreateChannelValues) {
     try {
-      console.log("Form submitted with:", values);
       await createChannel(values);
       toast({ description: "Channel created successfully!" });
       closeDialog("CreateChannelDialog");
@@ -51,9 +51,12 @@ export function CreateChannelDialog({ classData }: ChannelDialogProps) {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to create channel.`,
+        title: "Channel not created",
+        description: getUserFacingError(
+          error,
+          "We could not create the channel. Please try again.",
+        ),
       });
-      console.error("Channel creation error:", error);
     }
   }
 
@@ -72,7 +75,15 @@ export function CreateChannelDialog({ classData }: ChannelDialogProps) {
 
         <form
           onSubmit={form.handleSubmit(onSubmit, (errors) => {
-            console.error("Validation failed:", errors);
+            const message = errors.name?.message;
+            toast({
+              variant: "destructive",
+              title: "Check the channel name",
+              description:
+                typeof message === "string"
+                  ? message
+                  : "Enter a valid channel name.",
+            });
           })}
           className="grid gap-4 py-4"
         >

@@ -34,3 +34,19 @@ export const createMessageSchema = z.object({
 
 export type CreateClassValues = z.infer<typeof createClassSchema>;
 export type CreateChannelValues = z.infer<typeof createChannelSchema>;
+
+export const classDetailsSchema = z.object({
+  className: z.string().trim().min(1, "Class name cannot be empty").max(80, "Class name is too long"),
+  subject: z.string().trim().min(1, "Subject cannot be empty").max(80, "Subject is too long"),
+  description: z.string().trim().min(1, "Description cannot be empty").max(1000, "Description is too long"),
+  imageUrl: z.string().trim().url("Choose a valid class image"),
+});
+
+export const classPermissionsSchema = z.object({
+  isInviteEnabled: z.boolean(),
+  allowMemberMessages: z.boolean(),
+  allowMemberLiveParticipation: z.boolean(),
+});
+
+export type ClassDetailsValues = z.infer<typeof classDetailsSchema>;
+export type ClassPermissionsValues = z.infer<typeof classPermissionsSchema>;

@@ -29,6 +29,8 @@ export async function ensureClassAccess(classId: number, userId: string) {
           id: true,
           className: true,
           ownerId: true,
+          allowMemberMessages: true,
+          allowMemberLiveParticipation: true,
         },
       },
     },
@@ -49,6 +51,60 @@ export async function ensureClassOwner(classId: number, userId: string) {
   }
 
   return membership.class;
+}
+
+export async function ensureClassManager(classId: number, userId: string) {
+  const membership = await ensureClassAccess(classId, userId);
+  const isOwner = membership.class.ownerId === userId;
+  const isModerator = membership.role === "moderator";
+
+  if (!isOwner && !isModerator) {
+    throw new Error("Only class owners and moderators can manage members");
+  }
+
+  return membership;
+}
+
+export async function ensureNotTimedOut(classId: number, userId: string) {
+  const membership = await ensureClassAccess(classId, userId);
+
+  if (membership.timeoutUntil && membership.timeoutUntil > new Date()) {
+    throw new Error(
+      `You are timed out from this class until ${membership.timeoutUntil.toISOString()}`,
+    );
+  }
+
+  return membership;
+}
+
+export async function ensureCanSendClassMessages(
+  classId: number,
+  userId: string,
+) {
+  const membership = await ensureNotTimedOut(classId, userId);
+  const isManager =
+    membership.class.ownerId === userId || membership.role === "moderator";
+
+  if (!isManager && !membership.class.allowMemberMessages) {
+    throw new Error("Members are not allowed to send messages in this class");
+  }
+
+  return membership;
+}
+
+export async function ensureCanJoinClassLiveSession(
+  classId: number,
+  userId: string,
+) {
+  const membership = await ensureNotTimedOut(classId, userId);
+  const isManager =
+    membership.class.ownerId === userId || membership.role === "moderator";
+
+  if (!isManager && !membership.class.allowMemberLiveParticipation) {
+    throw new Error("Member participation is disabled for this live class");
+  }
+
+  return membership;
 }
 
 export async function ensureChannelAccess(channelId: number, userId: string) {

@@ -10,11 +10,15 @@ export interface Class {
   createdAt: Date;
   updatedAt: Date;
   classCode: string;
+  currentUserRole?: "owner" | "moderator" | "member";
+  isInviteEnabled?: boolean;
+  allowMemberMessages?: boolean;
+  allowMemberLiveParticipation?: boolean;
 }
 
 export interface ClassMember {
   id: number; 
-  role: "owner" | "member";
+  role: "owner" | "moderator" | "member";
   user: {
     name?: string;
     email: string;

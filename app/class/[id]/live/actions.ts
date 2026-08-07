@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  ensureCanJoinClassLiveSession,
   ensureClassAccess,
   requireCurrentUser,
 } from "@/lib/class-access";
@@ -59,7 +60,7 @@ export async function registerLiveSessionJoin(classId: number | string) {
   const parsedClassId = parseClassId(classId);
   const user = await requireCurrentUser();
 
-  await ensureClassAccess(parsedClassId, user.id);
+  await ensureCanJoinClassLiveSession(parsedClassId, user.id);
 
   const liveSession = await getActiveLiveSessionByClassId(parsedClassId);
 

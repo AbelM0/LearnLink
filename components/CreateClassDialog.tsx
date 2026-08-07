@@ -22,6 +22,7 @@ import { createClass, getUserClasses } from "@/app/actions";
 import { useClassStore } from "@/Stores/useClassStore";
 import { useRouter } from "next/navigation";
 import FileUpload from "./FileUpload";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 type CreateClassValues = z.infer<typeof createClassSchema>;
 
@@ -53,9 +54,12 @@ export function CreateClassDialog() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to create class`,
+        title: "Class not created",
+        description: getUserFacingError(
+          error,
+          "We could not create the class. Please try again.",
+        ),
       });
-      console.error("Class creation error:", error);
     }
   }
 

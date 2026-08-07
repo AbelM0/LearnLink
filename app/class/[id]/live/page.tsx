@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { ensureClassAccess } from "@/lib/class-access";
+import { ensureCanJoinClassLiveSession } from "@/lib/class-access";
 import { getActiveLiveSessionByClassId } from "@/lib/live-session";
 import LiveRoom from "@/components/live/LiveRoom";
 
@@ -18,7 +18,11 @@ export default async function LivePage({ params }: LivePageProps) {
     redirect(`/api/auth/signin?callbackUrl=/class/${id}/live`);
   }
 
-  await ensureClassAccess(classId, user.id);
+  try {
+    await ensureCanJoinClassLiveSession(classId, user.id);
+  } catch {
+    redirect(`/class/${id}`);
+  }
 
   const liveSession = await getActiveLiveSessionByClassId(classId);
 

@@ -5,7 +5,7 @@ import { ensureClassOwner } from "@/lib/class-access";
 import { CreateClassValues, createClassSchema, createChannelSchema, CreateChannelValues } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-;
+import { ClassAuditAction } from "@prisma/client";
 
 export async function createClass(values: CreateClassValues) {
   const session = await auth();
@@ -79,6 +79,23 @@ export async function joinClass(classCode: string) {
     throw Error("Class not found");
   }
 
+  if (!foundClass.isInviteEnabled) {
+    throw Error("Invitations are currently disabled for this class");
+  }
+
+  const existingBan = await prisma.classBan.findUnique({
+    where: {
+      userId_classId: {
+        userId,
+        classId: foundClass.id,
+      },
+    },
+  });
+
+  if (existingBan) {
+    throw Error("You are banned from this class");
+  }
+
   // Check if the user is already part of the class
   const existingClassUser = await prisma.classUser.findUnique({
     where: {
@@ -94,12 +111,23 @@ export async function joinClass(classCode: string) {
   }
 
   // Create an entry in the ClassUser table to associate the user with the class
-  await prisma.classUser.create({
-    data: {
-      userId: userId,
-      classId: foundClass.id,
-      role: 'member', // Or another role depending on your app
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.classUser.create({
+      data: {
+        userId,
+        classId: foundClass.id,
+        role: "member",
+      },
+    });
+
+    await tx.classAuditLog.create({
+      data: {
+        classId: foundClass.id,
+        actorId: userId,
+        targetUserId: userId,
+        action: ClassAuditAction.MEMBER_JOINED,
+      },
+    });
   });
 
   // Optionally, you can return the class info after joining

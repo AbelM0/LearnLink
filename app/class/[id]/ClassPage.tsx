@@ -47,6 +47,11 @@ export default function ClassPage({
         showChat={showChat}
         setShowChat={setShowChat}
         setShowMembers={setShowMembers}
+        canSendMessages={
+          classData.currentUserRole === "owner" ||
+          classData.currentUserRole === "moderator" ||
+          classData.allowMemberMessages !== false
+        }
       />
       <ClassMembers
         showMembers={showMembers}

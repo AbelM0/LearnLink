@@ -3,6 +3,7 @@
 import { z } from "zod";
 import {
   ensureChannelAccess,
+  ensureCanSendClassMessages,
   ensureClassAccess,
   requireCurrentUser,
 } from "@/lib/class-access";
@@ -17,9 +18,9 @@ export async function getClass(id: string) {
   const classId = positiveIdSchema.parse(id);
   const user = await requireCurrentUser();
 
-  await ensureClassAccess(classId, user.id);
+  const membership = await ensureClassAccess(classId, user.id);
 
-  return prisma.class.findUnique({
+  const classData = await prisma.class.findUnique({
     where: { id: classId },
     select: {
       id: true,
@@ -29,10 +30,25 @@ export async function getClass(id: string) {
       imageUrl: true,
       ownerId: true,
       classCode: true,
+      isInviteEnabled: true,
+      allowMemberMessages: true,
+      allowMemberLiveParticipation: true,
       createdAt: true,
       updatedAt: true,
     },
   });
+
+  if (!classData) {
+    return null;
+  }
+
+  return {
+    ...classData,
+    classCode: classData.ownerId === user.id ? classData.classCode : "",
+    currentUserRole: (classData.ownerId === user.id
+      ? "owner"
+      : membership.role) as "owner" | "moderator" | "member",
+  };
 }
 
 export async function getClassChannels(id: number) {
@@ -82,7 +98,7 @@ export async function getClassMembers(id: string) {
 
   return members.map((member) => ({
     id: member.id,
-    role: member.role as "owner" | "member",
+    role: member.role as "owner" | "moderator" | "member",
     user: member.user
       ? { name: member.user.name || undefined, email: member.user.email }
       : null,
@@ -93,7 +109,8 @@ export async function createMessage(values: CreateMessageValues) {
   const user = await requireCurrentUser();
   const { content, fileUrls = [], channelId } = createMessageSchema.parse(values);
 
-  await ensureChannelAccess(channelId, user.id);
+  const channel = await ensureChannelAccess(channelId, user.id);
+  await ensureCanSendClassMessages(channel.classId, user.id);
 
   return prisma.message.create({
     data: {

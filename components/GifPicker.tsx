@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Search, Loader2, X, TrendingUp, ArrowLeft, Star } from "lucide-react";
 import Image from "next/image";
 import { toggleFavoriteGif, getFavoriteGifs } from "@/actions/gif";
+import { toast } from "@/hooks/use-toast";
+import { getUserFacingError } from "@/lib/user-facing-error";
 
 const API_KEY = process.env.NEXT_PUBLIC_KLIPY_API_KEY;
 const BASE_URL = `https://api.klipy.com/api/v1/${API_KEY}`;
@@ -56,7 +58,16 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
   useEffect(() => {
     getFavoriteGifs().then((data) => {
       setFavorites(data.map((f: { klipyId: string }) => ({ klipyId: f.klipyId })));
-    }).catch(console.error);
+    }).catch((error) => {
+      toast({
+        variant: "destructive",
+        title: "Favorites unavailable",
+        description: getUserFacingError(
+          error,
+          "We could not load your favorite GIFs.",
+        ),
+      });
+    });
   }, []);
 
   // Debounce search
@@ -88,7 +99,14 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
           setCategories(cats);
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        toast({
+          variant: "destructive",
+          title: "GIF categories unavailable",
+          description: getUserFacingError(
+            error,
+            "We could not load GIF categories. Please try again.",
+          ),
+        });
       }
     };
     fetchCategories();
@@ -159,7 +177,16 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
            setGifs((prev) => [...prev, ...items]);
         }
       } catch (error) {
-        console.error("Failed to fetch GIFs:", error);
+        if (!cancelled) {
+          toast({
+            variant: "destructive",
+            title: "GIFs unavailable",
+            description: getUserFacingError(
+              error,
+              "We could not load GIFs. Please try again.",
+            ),
+          });
+        }
       } finally {
         if (!cancelled) {
            setIsLoading(false);
@@ -316,7 +343,14 @@ export default function GifPicker({ onSelect, onClose }: GifPickerProps) {
                         title: g.title,
                       });
                     } catch (err) {
-                      console.error("Failed to toggle favorite:", err);
+                      toast({
+                        variant: "destructive",
+                        title: "Favorite not updated",
+                        description: getUserFacingError(
+                          err,
+                          "We could not update this favorite.",
+                        ),
+                      });
                       if (isFav) setFavorites((prev) => [...prev, { klipyId: slug }]);
                       else setFavorites((prev) => prev.filter((f) => f.klipyId !== slug));
                     }
