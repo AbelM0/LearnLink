@@ -44,6 +44,8 @@ export default function Chat({
 
   const session = useSession();
   const userId = session.data?.user.id;
+  const userName = session.data?.user?.name || "Unknown";
+  const selectedChannelId = selectedChannel?.id;
 
   // Fetch messages using custom hook
   const { data: messages = [], isLoading } = useGetMessages(
@@ -52,35 +54,26 @@ export default function Chat({
 
   // Join channel room and listen for real-time messages
   useEffect(() => {
-    if (selectedChannel && socket.current) {
-      // Join the channel room
-      socket.current.emit(
-        "joinChannel",
-        selectedChannel.id,
-        session.data?.user?.name || "Unknown"
-      );
-
-      // Listen for new messages
-      const handleMessage = async (msg: {
-        content: string;
-        userId: string;
-        channelId: number;
-      }) => {
-        if (msg.channelId === selectedChannel.id) {
-          // Invalidate query to refetch messages
-          queryClient.invalidateQueries({
-            queryKey: ["messages", selectedChannel.id],
-          });
-        }
-      };
-      socket.current.on("message", handleMessage);
-
-      // Cleanup on channel change/unmount
-      return () => {
-        socket.current?.off("message", handleMessage);
-      };
+    if (!selectedChannelId || !socket) {
+      return;
     }
-  }, [selectedChannel, socket, session.data?.user?.name, queryClient]);
+
+    socket.emit("joinChannel", selectedChannelId, userName);
+
+    const handleMessage = (msg: { channelId: number }) => {
+      if (msg.channelId === selectedChannelId) {
+        void queryClient.invalidateQueries({
+          queryKey: ["messages", selectedChannelId],
+        });
+      }
+    };
+
+    socket.on("message", handleMessage);
+
+    return () => {
+      socket.off("message", handleMessage);
+    };
+  }, [selectedChannelId, socket, userName, queryClient]);
 
   return (
     <div
@@ -138,6 +131,7 @@ export default function Chat({
           channelId={selectedChannel.id}
           userId={userId}
           channelName={selectedChannel.name}
+          socket={socket}
         />
       )}
     </div>
