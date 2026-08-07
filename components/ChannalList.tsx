@@ -2,13 +2,20 @@
 
 import { useChannelStore } from "@/Stores/useChannelStore";
 import { Class } from "@/types/class-type";
-import { Hash } from "lucide-react";
+import { Hash, LoaderCircle, Radio, Video } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import AddChannelButton from "@/components/ui/AddChannelButton";
 import { ClassDropdownMenu } from "./ClassDropdownMenu";
 import { useGetChannels } from "@/hooks/queries/use-channel-query";
 import ChannelSkeleton from "./ChannelSkeleton";
+import {
+  useEndLiveSession,
+  useGetActiveLiveSession,
+  useStartLiveSession,
+} from "@/hooks/queries/use-live-query";
+import { Button } from "@/components/ui/button";
 
 interface ChannelListProps {
   showChat: boolean;
@@ -22,8 +29,13 @@ export default function ChannelList({
   classData,
 }: ChannelListProps) {
   const { selectedChannel, setSelectedChannel } = useChannelStore();
+  const router = useRouter();
 
   const { data: channels = [], isLoading } = useGetChannels(classData.id);
+  const { data: activeLiveSession, isLoading: isLoadingLiveSession } =
+    useGetActiveLiveSession(classData.id);
+  const startLiveSessionMutation = useStartLiveSession(classData.id);
+  const endLiveSessionMutation = useEndLiveSession(classData.id);
 
   // Reset selection when switching classes
   useEffect(() => {
@@ -39,6 +51,27 @@ export default function ChannelList({
 
   const session = useSession();
   const userId = session.data?.user.id;
+  const isOwner = userId === classData.ownerId;
+  const isLive = !!activeLiveSession;
+
+  async function handleStartLiveSession() {
+    try {
+      await startLiveSessionMutation.mutateAsync();
+      router.push(`/class/${classData.id}/live`);
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to start live class:", error);
+    }
+  }
+
+  async function handleEndLiveSession() {
+    try {
+      await endLiveSessionMutation.mutateAsync();
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to end live class:", error);
+    }
+  }
 
   return (
     <div
@@ -49,7 +82,7 @@ export default function ChannelList({
       <div className="border-b pb-2 mb-2">
         <div className="flex justify-between items-center mb-1">
           <h2 className="text-lg font-semibold">{classData.className}</h2>
-          {userId === classData.ownerId && <ClassDropdownMenu />}
+          {userId === classData.ownerId && <ClassDropdownMenu classCode={classData.classCode} />}
         </div>
 
         <p className="text-sm ">{classData.subject}</p>
@@ -59,9 +92,88 @@ export default function ChannelList({
           </p>
         )} */}
       </div>
+      <div className="mb-3 rounded-xl border border-border bg-background/60 p-3">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              Live class
+            </p>
+            <p className="mt-1 text-sm font-medium">
+              {isLive ? "Session is live now" : "No active live session"}
+            </p>
+          </div>
+          <div
+            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+              isLive
+                ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                : "border border-border bg-card text-muted-foreground"
+            }`}
+          >
+            {isLive ? (
+              <span className="inline-flex items-center gap-1">
+                <Radio className="size-3" />
+                LIVE
+              </span>
+            ) : (
+              "Offline"
+            )}
+          </div>
+        </div>
+
+        {activeLiveSession ? (
+          <div className="mb-3 rounded-lg bg-card/70 px-3 py-2 text-sm text-muted-foreground">
+            {activeLiveSession.participantCount} participant
+            {activeLiveSession.participantCount === 1 ? "" : "s"} connected
+          </div>
+        ) : null}
+
+        <div className="flex flex-col gap-2">
+          {isLive ? (
+            <Button
+              className="w-full gap-2"
+              onClick={() => router.push(`/class/${classData.id}/live`)}
+            >
+              <Video className="size-4" />
+              Join live class
+            </Button>
+          ) : isOwner ? (
+            <Button
+              className="w-full gap-2"
+              onClick={() => void handleStartLiveSession()}
+              disabled={startLiveSessionMutation.isPending}
+            >
+              {startLiveSessionMutation.isPending ? (
+                <LoaderCircle className="size-4 animate-spin" />
+              ) : (
+                <Video className="size-4" />
+              )}
+              Start live class
+            </Button>
+          ) : (
+            <div className="rounded-lg border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
+              The class owner can start a live session here.
+            </div>
+          )}
+
+          {isOwner && isLive ? (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => void handleEndLiveSession()}
+              disabled={endLiveSessionMutation.isPending}
+            >
+              {endLiveSessionMutation.isPending ? "Ending..." : "End live class"}
+            </Button>
+          ) : null}
+
+          {isLoadingLiveSession ? (
+            <div className="text-xs text-muted-foreground">Checking live status...</div>
+          ) : null}
+        </div>
+      </div>
       <div className="flex justify-between items-center mb-1">
         <p>Text Channels</p>
-        {userId === classData.ownerId && <AddChannelButton />}
+        {isOwner && <AddChannelButton />}
       </div>
       {isLoading ? (
         <ChannelSkeleton />

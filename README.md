@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Live classes
+
+LearnLink live classes use LiveKit Cloud or a self-hosted LiveKit server. Create a project and API credentials, then add these variables to .env:
+
+    LIVEKIT_URL=wss://your-project.livekit.cloud
+    LIVEKIT_API_KEY=...
+    LIVEKIT_API_SECRET=...
+
+The API secret stays on the server. LearnLink creates a room when a class owner starts a session, issues room-scoped participant tokens after class-access checks, and uses LiveKit's built-in React components with a LearnLink theme bridge.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

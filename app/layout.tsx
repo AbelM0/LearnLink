@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Comfortaa, Roboto } from "next/font/google";
+import "@livekit/components-styles";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { Toaster } from "@/components/ui/toaster";
@@ -60,7 +61,7 @@ export default async function RootLayout({
                 <AppSidebar/>
 
                 {/* Main Content */}
-                <main className="flex-grow">
+                <main className="min-w-0 flex-grow">
                   <NavBar />
                   <div className="p-2">{children}</div>
                   <Toaster />

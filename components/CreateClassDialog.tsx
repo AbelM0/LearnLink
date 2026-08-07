@@ -20,7 +20,7 @@ import { createClassSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClass, getUserClasses } from "@/app/actions";
 import { useClassStore } from "@/Stores/useClassStore";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import FileUpload from "./FileUpload";
 
 type CreateClassValues = z.infer<typeof createClassSchema>;
@@ -29,6 +29,7 @@ export function CreateClassDialog() {
   const { openDialogs, closeDialog } = useDialogStore();
   const { toast } = useToast();
   const { setClasses } = useClassStore();
+  const router = useRouter();
 
   const form = useForm<CreateClassValues>({
     resolver: zodResolver(createClassSchema),
@@ -48,7 +49,7 @@ export function CreateClassDialog() {
       form.reset();
       const classes = await getUserClasses();
       setClasses(classes);
-      redirect("/");
+      router.push("/");
     } catch (error) {
       toast({
         variant: "destructive",

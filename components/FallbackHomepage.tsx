@@ -1,6 +1,4 @@
 import React from 'react'
-import { CreateClassDialog } from "@/components/CreateClassDialog";
-import { JoinClassDialog } from "@/components/JoinClassDialog";
 import Image from "next/image"
 import illu from "@/assets/images/ChatGPT Image Apr 10, 2025, 10_53_43 AM.png"
 import { Button } from "@/components/ui/button";
@@ -11,9 +9,7 @@ function FallbackHomepage() {
   const { openDialog } = useDialogStore();
 
   return (
-    <div className="flex flex-col items-center">
-        <CreateClassDialog />
-        <JoinClassDialog />
+        <div className="flex flex-col items-center">
         <Image
             src={illu}
             alt="Home picture"

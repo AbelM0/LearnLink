@@ -1,21 +1,20 @@
-import { useEffect, useRef } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 export default function useSocket() {
-  const socket = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    socket.current = io("https://learnlink-render-socket.onrender.com", {
+    const connection = io("https://learnlink-render-socket.onrender.com", {
       transports: ["websocket"],
     });
 
-    socket.current.on("connect", () => {
-      console.log("✅ Connected to socket server");
-    });
+    setSocket(connection);
 
     return () => {
-      socket.current?.disconnect();
-      console.log("❌ Disconnected from socket server");
+      connection.disconnect();
     };
   }, []);
 

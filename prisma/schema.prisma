@@ -19,24 +19,26 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  classes    Class[]     @relation("ClassUsers")
-  classUsers ClassUser[]
-  messages Message[]
-  favoriteGifs FavoriteGif[]
+  classes                 Class[]                  @relation("ClassUsers")
+  classUsers              ClassUser[]
+  messages                Message[]
+  favoriteGifs            FavoriteGif[]
+  hostedLiveSessions      LiveSession[]            @relation("HostedLiveSessions")
+  liveSessionParticipants LiveSessionParticipant[]
 
   @@map("users")
 }
 
 model FavoriteGif {
-  id        Int      @id @default(autoincrement())
-  userId    String
-  klipyId   String   
-  url       String
-  width     Int
-  height    Int
-  title     String?
+  id      Int     @id @default(autoincrement())
+  userId  String
+  klipyId String
+  url     String
+  width   Int
+  height  Int
+  title   String?
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -98,12 +100,13 @@ model Class {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users     User[]      @relation("ClassUsers")
-  ClassUser ClassUser[]
-  Channels Channel[]
+  users        User[]        @relation("ClassUsers")
+  ClassUser    ClassUser[]
+  Channels     Channel[]
+  liveSessions LiveSession[]
 
-  @@map("class")
   @@index([id])
+  @@map("class")
 }
 
 model ClassUser {
@@ -117,15 +120,15 @@ model ClassUser {
 
   createdAt DateTime @default(now())
 
-  @@unique([userId, classId]) 
+  @@unique([userId, classId])
 }
 
 model Channel {
-  id        Int      @id @default(autoincrement())
-  name      String
-  classId   Int
-  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  messages  Message[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  classId  Int
+  class    Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  messages Message[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -135,18 +138,64 @@ model Channel {
 }
 
 model Message {
-  id         Int      @id @default(autoincrement())
-  content    String?
-  fileUrls   String[] @default([])
-  userId     String
-  channelId  Int
+  id        Int      @id @default(autoincrement())
+  content   String?
+  fileUrls  String[] @default([])
+  userId    String
+  channelId Int
 
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("message")
 }
 
+model LiveSession {
+  id        Int               @id @default(autoincrement())
+  classId   Int
+  hostId    String
+  roomName  String            @unique
+  status    LiveSessionStatus @default(LIVE)
+  startedAt DateTime          @default(now())
+  endedAt   DateTime?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  class        Class                    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  host         User                     @relation("HostedLiveSessions", fields: [hostId], references: [id], onDelete: Cascade)
+  participants LiveSessionParticipant[]
+
+  @@index([classId, status])
+  @@map("live_session")
+}
+
+model LiveSessionParticipant {
+  id            Int             @id @default(autoincrement())
+  liveSessionId Int
+  userId        String
+  role          LiveSessionRole @default(PARTICIPANT)
+  joinedAt      DateTime        @default(now())
+  leftAt        DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  liveSession LiveSession @relation(fields: [liveSessionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([liveSessionId, joinedAt])
+  @@index([userId])
+  @@map("live_session_participant")
+}
+
+enum LiveSessionStatus {
+  LIVE
+  ENDED
+}
+
+enum LiveSessionRole {
+  HOST
+  PARTICIPANT
+}

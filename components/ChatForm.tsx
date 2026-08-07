@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createMessageSchema } from "@/lib/validation";
-import useSocket from "@/hooks/use-socket";
 import { useSendMessage } from "@/hooks/queries/use-chat-query";
+import type { Socket } from "socket.io-client";
 import { Plus, Loader2, FileIcon, Trash2 } from "lucide-react";
 import FileUpload from "./FileUpload";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -36,15 +36,15 @@ interface ChatFormProps {
   channelId: number;
   userId: string;
   channelName: string;
+  socket: Socket | null;
 }
 
 export default function ChatForm({
   channelId,
   userId,
   channelName,
+  socket,
 }: ChatFormProps) {
-  const socket = useSocket();
-
   const id = userId;
   const channel_id = channelId;
 
@@ -73,7 +73,7 @@ export default function ChatForm({
     mutate(submitValues, {
       onSuccess: (data, variables) => {
         // Emit message to socket server for real-time update
-        socket.current?.emit("message", {
+        socket?.emit("message", {
           ...variables,
           content: variables.content || " ",
           channelId,
@@ -225,7 +225,7 @@ export default function ChatForm({
                       channelId: channel_id,
                     }, {
                       onSuccess: (data, variables) => {
-                        socket.current?.emit("message", {
+                        socket?.emit("message", {
                           ...variables,
                           content: variables.content || " ",
                           channelId,
