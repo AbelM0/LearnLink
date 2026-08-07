@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import {
-  ensureClassAccess,
-  getActiveLiveSessionByClassId,
-} from "@/lib/live-session";
+import { ensureClassAccess } from "@/lib/class-access";
+import { getActiveLiveSessionByClassId } from "@/lib/live-session";
 import LiveRoom from "@/components/live/LiveRoom";
 
 interface LivePageProps {

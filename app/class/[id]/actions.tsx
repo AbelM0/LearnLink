@@ -1,56 +1,70 @@
-"use server"
+"use server";
 
+import { z } from "zod";
+import {
+  ensureChannelAccess,
+  ensureClassAccess,
+  requireCurrentUser,
+} from "@/lib/class-access";
 import { prisma } from "@/lib/prisma";
 import { createMessageSchema } from "@/lib/validation";
-import { z } from "zod"
 
 type CreateMessageValues = z.infer<typeof createMessageSchema>;
 
+const positiveIdSchema = z.coerce.number().int().positive();
 
-export const getClass = async (id: string) => {
-    const classId = Number(id)
-  
-    return prisma.class.findUnique({
-      where: { id: classId },
-      select: { 
-        id: true, 
-        className: true, 
-        subject: true, 
-        description: true,
-        imageUrl: true,
-        ownerId: true, 
-        classCode: true, 
-        createdAt: true, 
-        updatedAt: true, 
-      },
+export async function getClass(id: string) {
+  const classId = positiveIdSchema.parse(id);
+  const user = await requireCurrentUser();
+
+  await ensureClassAccess(classId, user.id);
+
+  return prisma.class.findUnique({
+    where: { id: classId },
+    select: {
+      id: true,
+      className: true,
+      subject: true,
+      description: true,
+      imageUrl: true,
+      ownerId: true,
+      classCode: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
-};
+}
 
-export const getClassChannels = async(id: number) => {
-  const classId= id;
+export async function getClassChannels(id: number) {
+  const classId = positiveIdSchema.parse(id);
+  const user = await requireCurrentUser();
 
-   const channels = await prisma.class.findUnique({
-     where: { id: classId },
-     select: {
-       Channels: {
-         select: {
-           id: true,
-           name: true,
-           createdAt: true,
-         },
-         orderBy: {
-           createdAt: "asc",
-         },
-       },
-     },
-   });
+  await ensureClassAccess(classId, user.id);
 
-   return channels?.Channels || [];
-};
+  const classWithChannels = await prisma.class.findUnique({
+    where: { id: classId },
+    select: {
+      Channels: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
+  });
 
+  return classWithChannels?.Channels ?? [];
+}
 
-export const getClassMembers = async (id: string) => {
-  const classId = Number(id);
+export async function getClassMembers(id: string) {
+  const classId = positiveIdSchema.parse(id);
+  const user = await requireCurrentUser();
+
+  await ensureClassAccess(classId, user.id);
 
   const members = await prisma.classUser.findMany({
     where: { classId },
@@ -66,47 +80,40 @@ export const getClassMembers = async (id: string) => {
     },
   });
 
-  // Ensure the response structure matches `ClassMember`
   return members.map((member) => ({
-    id: member.id, // Keep the classUser ID
-    role: member.role as "owner" | "member", // Ensure correct typing
+    id: member.id,
+    role: member.role as "owner" | "member",
     user: member.user
       ? { name: member.user.name || undefined, email: member.user.email }
-      : null, // Explicitly handle null users
+      : null,
   }));
-  };
+}
 
 export async function createMessage(values: CreateMessageValues) {
-  const { content, fileUrls, userId, channelId } = values;
+  const user = await requireCurrentUser();
+  const { content, fileUrls = [], channelId } = createMessageSchema.parse(values);
 
-  if ((!content && (!fileUrls || fileUrls.length === 0)) || !userId || !channelId) {
-    throw new Error(`Missing required fields. Content/Files: ${content || (fileUrls && fileUrls.join(","))}, userId: ${userId}, channelId: ${channelId}`);
-  }
+  await ensureChannelAccess(channelId, user.id);
 
-  const newMessage = await prisma.message.create({
+  return prisma.message.create({
     data: {
       content: content || null,
-      fileUrls: fileUrls || [],
-      userId,
+      fileUrls,
+      userId: user.id,
       channelId,
     },
   });
-
-  return newMessage;
 }
 
-export async function getChannelMessages(channelId: number) {
-  if (!channelId) {
-    throw new Error("Channel ID is required");
-  }
+export async function getChannelMessages(channelIdValue: number) {
+  const channelId = positiveIdSchema.parse(channelIdValue);
+  const user = await requireCurrentUser();
 
-  const messages = await prisma.message.findMany({
-    where: {
-      channelId: channelId,
-    },
-    orderBy: {
-      createdAt: "asc", // Ordering messages by the creation date
-    },
+  await ensureChannelAccess(channelId, user.id);
+
+  return prisma.message.findMany({
+    where: { channelId },
+    orderBy: { createdAt: "asc" },
     include: {
       user: {
         select: {
@@ -117,6 +124,4 @@ export async function getChannelMessages(channelId: number) {
       },
     },
   });
-
-  return messages;
 }

@@ -129,7 +129,6 @@ export default function Chat({
       {selectedChannel && userId !== undefined && (
         <ChatForm
           channelId={selectedChannel.id}
-          userId={userId}
           channelName={selectedChannel.name}
           socket={socket}
         />

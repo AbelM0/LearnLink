@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { createParticipantToken, getLiveKitWsUrl } from "@/lib/livekit";
 import {
   ensureClassAccess,
-  getActiveLiveSessionByClassId,
   requireCurrentUser,
+} from "@/lib/class-access";
+import {
+  getActiveLiveSessionByClassId,
   upsertLiveSessionParticipant,
 } from "@/lib/live-session";
 import { LiveSessionRole } from "@prisma/client";
