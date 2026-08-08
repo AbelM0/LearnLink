@@ -43,10 +43,10 @@ export const ClassCard = ({ clsData }: classCardProps) => {
           </p>
 
           {/* Footer (Online & Members) - This stays at the bottom */}
-          <div className="mt-auto flex justify-between text-xs opacity-60 pt-3 border-t border-border">
+          {/* <div className="mt-auto flex justify-between text-xs opacity-60 pt-3 border-t border-border">
             <span>🟢 {Math.floor(Math.random() * 1000)} Online</span>
             <span>👥 {Math.floor(Math.random() * 10000)} Members</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </Link>
